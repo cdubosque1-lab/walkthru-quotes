@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Walkthru Instant Quote</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#F6F3EE; --surface:#FFFFFF; --ink:#14233A; --muted:#54627A; --line:#E3DDD2;
+  --navy:#12315A; --navy-2:#1C4A82;
+  --accent:#D9480F; --accent-ink:#FFFFFF; --accent-soft:#FDEBDD; --accent-text:#B03A0A;
+  --rec:#C8261E; --ok-bg:#E3F1EA; --ok-ink:#1D5A3C; --warn-bg:#FFF1D6; --warn-ink:#6B3F00;
+  --video-bg:#0C1016; --shadow:0 1px 2px rgba(20,35,58,.06),0 8px 24px rgba(20,35,58,.06);
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0E1622; --surface:#16212F; --ink:#EAEFF7; --muted:#A9B5C6; --line:#263446;
+  --navy:#0B1E38; --navy-2:#15355F;
+  --accent:#FF8A4C; --accent-ink:#1A0D04; --accent-soft:#33200F; --accent-text:#FFB083;
+  --rec:#FF6B5E; --ok-bg:#16291F; --ok-ink:#8FD3AE; --warn-bg:#2C2210; --warn-ink:#F2C774;
+  --video-bg:#05070A; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+.app{max-width:560px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(32px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:18px}
+[hidden]{display:none!important}
+h1,h2{margin:0;line-height:1.2;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+header{display:flex;flex-direction:column;gap:6px}
+header h1{font-size:28px;font-weight:700;letter-spacing:-.01em}
+header p.lead{color:var(--muted)}
+.steps{display:flex;gap:6px}
+.steps span{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.steps span.on{background:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.card h2{font-size:19px;font-weight:600}
+.field{display:flex;flex-direction:column;gap:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label,.label{font-size:14px;font-weight:600}
+label.sub{font-weight:500;color:var(--muted);font-size:13px}
+.row3{display:grid;grid-template-columns:1.6fr .7fr 1fr;gap:10px}
+select{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
+.q{display:flex;flex-direction:column;gap:8px;padding-top:4px}
+.pct{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+input[type=text],input[type=date],input[type=tel]{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
+input:focus-visible,button:focus-visible,.choice:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-weight:500}
+.choice input{width:20px;height:20px;accent-color:var(--accent);margin:0}
+.choice:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+.consent input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex:none}
+.err{font-size:14px;color:var(--rec);font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border-radius:12px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:600;font-size:17px;cursor:pointer;width:100%;text-decoration:none}
+.btn.secondary{background:var(--surface);color:var(--accent-text);border-color:var(--line)}
+.btn.stop{background:var(--rec);border-color:var(--rec);color:#FFFFFF}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.linkbtn{background:none;border:0;padding:6px 0;color:var(--accent-text);font:inherit;font-size:14px;font-weight:600;text-decoration:underline;cursor:pointer;align-self:flex-start}
+.tips{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.note{padding:12px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn-ink);font-size:14px}
+.cam{position:relative;width:100%;max-height:68vh;aspect-ratio:9/16;background:var(--video-bg);border-radius:14px;overflow:hidden;margin:0 auto}
+.cam video{width:100%;height:100%;object-fit:cover;display:block}
+.recbar{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(8,12,18,.72);color:#FFFFFF;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--rec)}
+.recbar.live .dot{animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.recbar.live .dot{animation:none}}
+.soundtag{position:absolute;right:12px;top:12px;padding:6px 10px;border-radius:999px;background:rgba(8,12,18,.72);color:#FFFFFF;font-size:13px;font-weight:500}
+.playback{width:100%;max-height:60vh;border-radius:14px;background:var(--video-bg);display:block}
+.meta{font-size:14px;color:var(--muted)}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.done{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.check{width:52px;height:52px;border-radius:50%;background:var(--ok-bg);color:var(--ok-ink);display:flex;align-items:center;justify-content:center}
+.modal{position:fixed;inset:0;background:rgba(8,12,18,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal .box{background:var(--surface);color:var(--ink);border-radius:16px;max-width:420px;width:100%;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.modal h2{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.modal .save{display:inline-block;align-self:flex-start;padding:4px 10px;border-radius:999px;background:var(--ok-bg);color:var(--ok-ink);font-weight:700;font-size:14px}
+.foot{font-size:12px;color:var(--muted);text-align:center}
+
+.app{max-width:600px}
+.card{border-radius:18px;box-shadow:var(--shadow);padding:22px}
+.btn{border-radius:14px;font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.btn.secondary{box-shadow:none}
+input[type=text],input[type=date],input[type=tel],select{border-radius:12px;border-color:var(--line)}
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);border-radius:22px;color:#fff;padding:22px 20px 0;overflow:hidden;position:relative}
+.hero .eyebrow{color:#FFC9A8}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:6px 0 8px;color:#fff}
+.hero p.lead{color:#D5E1F2;font-size:15px}
+.hero svg{display:block;width:100%;height:auto;margin-top:8px}
+.brandbar{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em;color:#fff;font-size:15px}
+.brandbar i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-style:normal}
+.dots{display:flex;gap:8px;justify-content:center}
+.dots span{width:8px;height:8px;border-radius:50%;background:var(--line);transition:all .2s}
+.dots span.on{background:var(--accent);width:24px;border-radius:4px}
+.slide h2{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.slide .kick{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent-text)}
+.stepsl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:s}
+.stepsl li{display:flex;gap:12px;align-items:flex-start;counter-increment:s}
+.stepsl li:before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.stepsl b{display:block;font-size:15px}
+.stepsl span{color:var(--muted);font-size:14px}
+.bul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+.bul li{padding:12px 14px;border-radius:14px;background:var(--accent-soft);font-size:15px}
+.bul b{color:var(--accent-text)}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--ok-bg);color:var(--ok-ink);font-weight:700;font-size:13px;align-self:flex-start}
+.callout{display:flex;gap:12px;padding:14px;border-radius:14px;background:var(--accent-soft);color:var(--ink);font-size:14px;align-items:flex-start}
+.callout svg{flex:none;margin-top:2px}
+.callout.warn{background:var(--warn-bg);color:var(--warn-ink)}
+.callout b{display:block;margin-bottom:2px}
+.perk{display:flex;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;align-items:flex-start}
+.perk svg{flex:none}
+.perk b{display:block}
+.perk span{color:var(--muted);font-size:14px}
+details.more{font-size:14px;color:var(--muted)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--accent-text)}
+.navrow{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.sect-intro{display:flex;flex-direction:column;gap:10px}
+.hint{font-size:13px;color:var(--muted)}
+.savebox{padding:14px;border-radius:14px;border:1px dashed var(--accent);background:var(--accent-soft);display:flex;flex-direction:column;gap:6px;font-size:14px}
+.savebox b{font-size:15px;color:var(--accent-text)}
+.stay{background:var(--warn-bg);color:var(--warn-ink);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.stay b{display:block}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+select{appearance:auto}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="hero" id="hero">
+    <div class="brandbar"><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h12v9H3zM15 10h4l2 3v3h-6z" fill="#fff"/><circle cx="7" cy="17" r="2" fill="#12315A" stroke="#fff"/><circle cx="17" cy="17" r="2" fill="#12315A" stroke="#fff"/></svg></i>Walkthru</div>
+    <h1>Take the guesswork out of moving.</h1>
+    <p class="lead">Get an accurate moving estimate from a quick video of your home. About 5 to 10 minutes. <span id="repName" hidden>Christian</span></p>
+    <svg viewBox="0 0 560 190" role="img" aria-label="Movers carrying boxes beside a moving truck" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="160" width="560" height="30" fill="#0B2342"/>
+<rect x="0" y="158" width="560" height="4" fill="#26507F"/>
+<g transform="translate(250,40)">
+ <rect x="0" y="0" width="215" height="112" rx="8" fill="#F4F7FB"/>
+ <rect x="0" y="80" width="215" height="10" fill="#D9480F"/>
+ <rect x="14" y="20" width="60" height="6" rx="3" fill="#C5D2E4"/><rect x="14" y="34" width="90" height="6" rx="3" fill="#C5D2E4"/>
+ <path d="M218 30 h38 q10 0 16 9 l20 28 v45 h-74z" fill="#D9480F"/>
+ <path d="M228 40 h26 q6 0 9 5 l12 18 h-47z" fill="#BFE0F5"/>
+ <rect x="0" y="108" width="290" height="14" rx="3" fill="#1B2B44"/>
+ <circle cx="52" cy="122" r="18" fill="#101826"/><circle cx="52" cy="122" r="8" fill="#A9B5C6"/>
+ <circle cx="236" cy="122" r="18" fill="#101826"/><circle cx="236" cy="122" r="8" fill="#A9B5C6"/>
+</g>
+<g transform="translate(30,60)">
+ <circle cx="62" cy="26" r="15" fill="#F2C9A5"/><path d="M47 22 q15 -20 30 0 v4 h-30z" fill="#D9480F"/>
+ <rect x="44" y="42" width="36" height="52" rx="10" fill="#1C4A82"/>
+ <rect x="48" y="90" width="12" height="40" rx="5" fill="#0B2342"/><rect x="66" y="90" width="12" height="40" rx="5" fill="#0B2342"/>
+ <rect x="80" y="54" width="52" height="40" rx="4" fill="#C98F55"/><rect x="80" y="70" width="52" height="5" fill="#E4B27A"/>
+ <path d="M72 56 l20 14" stroke="#1C4A82" stroke-width="10" stroke-linecap="round"/>
+</g>
+<g transform="translate(170,100)">
+ <rect x="0" y="30" width="50" height="38" rx="3" fill="#C98F55"/><rect x="0" y="44" width="50" height="4" fill="#E4B27A"/>
+ <rect x="10" y="0" width="38" height="30" rx="3" fill="#B98048"/><rect x="10" y="12" width="38" height="4" fill="#DDAA70"/>
+</g>
+</svg>
+  </header>
+  <div class="steps" id="stepsBar" aria-hidden="true" hidden><span id="s1" class="on"></span><span id="s2"></span><span id="s3"></span></div>
+
+  <!-- Welcome slides -->
+  <section id="welcome" class="card slide" aria-live="polite">
+    <div class="dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="sl" data-i="0">
+      <div class="sect-intro">
+        <span class="kick">Why Walkthru</span>
+        <h2>Accurate inventory. Accurate price.</h2>
+        <span class="pill">No surprises on move day</span>
+        <ul class="bul">
+          <li><b>Nobody can price a move they haven't seen.</b> Movers who guess at your inventory can add "it wasn't on the list" charges on move day.</li>
+          <li><b>House calls cost you.</b> Companies that still do in-home estimates typically add about 20 to 30% to the total cost of the move to send someone out for a physical inventory.</li>
+          <li><b>We solved that.</b> With Walkthru, you get an accurate inventory and an accurate price from a reliable mover, built from your own video.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sl" data-i="1" hidden>
+      <div class="sect-intro">
+        <span class="kick">How it works</span>
+        <h2>The whole move, handled</h2>
+        <span class="pill">All included. No extra charge.</span>
+        <ol class="stepsl">
+          <li><div><b>Walkthrough photos</b><span>We document everything so it arrives in the same condition it left.</span></div></li>
+          <li><div><b>Disassembly</b><span>All standard furniture, taken apart for you.</span></div></li>
+          <li><div><b>Full wrap</b><span>Blanket, pad and shrink wrap on every piece of standard furniture.</span></div></li>
+          <li><div><b>Loading and driving, done by our crew</b><span>Our crew loads everything and drives it to your new home in a box truck or a semi, depending on your move. You never lift or drive a thing.</span></div></li>
+          <li><div><b>Unloading and setup, done by our crew</b><span>Our crew unloads, unwraps and reassembles everything. You're the foreman: point, and the crew places it.</span></div></li>
+          <li><div><b>Clean sweep</b><span>The crew takes the pads, wrap and debris with them.</span></div></li>
+        </ol>
+      </div>
+    </div>
+    <div class="sl" data-i="2" hidden>
+      <div class="sect-intro">
+        <span class="kick">Your choice</span>
+        <h2>Pack as little or as much as you want</h2>
+        <div class="perk"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M6 14l16-8 16 8v18l-16 8-16-8z" fill="#E4B27A" stroke="#8A5A28" stroke-width="2" stroke-linejoin="round"/><path d="M6 14l16 8 16-8M22 22v18" stroke="#8A5A28" stroke-width="2"/></svg><div><b>Boxes, mirrors, artwork and TVs</b><span>Want help packing any of it? We offer it, and we supply the boxes, including TV boxes.</span></div></div>
+        <div class="perk"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#12315A" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="#12315A" stroke-width="2.4" stroke-linecap="round"/></svg><div><b>Or do it all yourself</b><span>Your call. Tell us what you'd like on the next page, and you can change your mind later.</span></div></div>
+      </div>
+    </div>
+    <div class="sl" data-i="3" hidden>
+      <div class="sect-intro">
+        <span class="kick">The biggest way to save</span>
+        <h2>Book ahead and save thousands</h2>
+        <span class="pill">Change your date free. Keep your price.</span>
+        <ul class="bul">
+          <li><b>Book early, pay less.</b> Moves are priced like airline tickets: the earlier you reserve, the better your rate. Booking ahead can save you thousands, often 20 to 50%.</li>
+          <li><b>Floating reservation.</b> Your date is just a placeholder. Change it to any date in the next 2 calendar years (minus national holidays), free, and keep your price.</li>
+          <li><b>All you need:</b> to know you're definitely moving within the next 2 calendar years, plus a general zip code within 200 miles of where you're headed. No exact drop-off address or exact date needed.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sl" data-i="4" hidden>
+      <div class="sect-intro">
+        <span class="kick">Quality assurance</span>
+        <h2>Your list isn't set in stone</h2>
+        <span class="pill">Change it any time before move day</span>
+        <ul class="bul">
+          <li><b>Not sure what's going? That's normal.</b> Things change between now and move day, and we expect that.</li>
+          <li><b>One last review call.</b> 3 to 5 days before your move, our quality assurance team calls to go over your inventory with you one final time.</li>
+          <li><b>Add or remove anything.</b> Bought a new TV? Sold the dining table? Fewer boxes than we listed? Tell us then, and your price is adjusted to match. Anything you take off, you don't pay for.</li>
+          <li><b>No surprises.</b> Every change is settled before move day.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sl" data-i="5" hidden>
+      <div class="sect-intro">
+        <span class="kick">Bonus</span>
+        <h2>30 days of free storage</h2>
+        <div class="perk"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M6 18l16-10 16 10v20H6z" fill="#E3F1EA" stroke="#1D5A3C" stroke-width="2" stroke-linejoin="round"/><rect x="15" y="24" width="14" height="14" fill="#1D5A3C"/><path d="M22 24v14" stroke="#E3F1EA" stroke-width="2"/></svg><div><b>Free storage and free redelivery</b><span>Hold your items for up to 30 days at no charge, then we deliver them to your final destination, also free.</span></div></div>
+        <p class="meta">Need longer? After the first 30 days it's $0.50 per cubic foot. Once we have your inventory, we'll tell you your exact monthly rate. We can hold your items for up to 2 years.</p>
+      </div>
+    </div>
+    <div class="navrow"><button class="btn secondary" id="wBack" type="button" hidden>Back</button><button class="btn" id="wNext" type="button">Next</button></div>
+  </section>
+
+  <!-- Step 1: details -->
+  <form id="details" class="card" novalidate hidden>
+    <div class="sect-intro">
+      <h2>First, how much packing help?</h2>
+      <div class="callout"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#B03A0A" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="#B03A0A" stroke-width="2.4" stroke-linecap="round"/></svg><div><b>Included on every move, at no extra charge</b>We always disassemble and reassemble standard furniture, fully blanket, pad and shrink wrap it, and do all the loading and unloading. We do this on every move for liability reasons. If you've already done some of it, great.</div></div>
+    </div>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Would you like us to supply and pack your boxes?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="packing" value="we_pack"> <span>Yes, supply and pack all my boxes for me<br><small class="hint">A little extra cost</small></span></label>
+        <label class="choice"><input type="radio" name="packing" value="self"> No, I'll supply and pack my own boxes</label>
+        <label class="choice"><input type="radio" name="packing" value="some"> I'll do some, and I'd like the movers to do some</label>
+        <label class="choice"><input type="radio" name="packing" value="unsure"> I'm not sure yet</label>
+      </div>
+    </fieldset>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Do you think you'll need storage?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="storage" value="yes"> Yes</label>
+        <label class="choice"><input type="radio" name="storage" value="no"> No</label>
+        <label class="choice"><input type="radio" name="storage" value="maybe"> Maybe</label>
+      </div>
+      <div class="field" id="storLenWrap" hidden style="margin-top:8px"><label class="sub" for="storLen">About how long?</label>
+        <select id="storLen"><option value="">Choose one</option><option>Under 30 days</option><option>1 to 3 months</option><option>3 to 6 months</option><option>6 months or more</option><option>Not sure</option></select></div>
+    </fieldset>
+    <hr style="border:0;border-top:1px solid var(--line);width:100%;margin:2px 0">
+    <h2>Your move</h2>
+    <div class="row2">
+      <div class="field"><label for="first">First name</label><input id="first" type="text" autocomplete="given-name" required></div>
+      <div class="field"><label for="last">Last name</label><input id="last" type="text" autocomplete="family-name" required></div>
+    </div>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Moving from <span class="hint">(zip or state is enough)</span></legend>
+      <div class="field"><label class="sub" for="fromAddr">Street address (optional)</label><input id="fromAddr" type="text" autocomplete="street-address"></div>
+      <div class="row3"><div class="field"><label class="sub" for="fromCity">City</label><input id="fromCity" type="text"></div>
+      <div class="field"><label class="sub" for="fromState">State</label><input id="fromState" type="text" maxlength="2" autocapitalize="characters"></div>
+      <div class="field"><label class="sub" for="fromZip">Zip</label><input id="fromZip" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code"></div></div>
+    </fieldset>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Moving to <span class="hint">(zip or state is enough)</span></legend>
+      <div class="field"><label class="sub" for="toAddr">Street address (optional)</label><input id="toAddr" type="text"></div>
+      <div class="row3"><div class="field"><label class="sub" for="toCity">City</label><input id="toCity" type="text"></div>
+      <div class="field"><label class="sub" for="toState">State</label><input id="toState" type="text" maxlength="2" autocapitalize="characters"></div>
+      <div class="field"><label class="sub" for="toZip">Zip</label><input id="toZip" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5"></div></div>
+    </fieldset>
+    <p class="hint" style="margin-top:-6px">No exact addresses yet? No problem. A zip code (or even just the state) is enough for now. For the drop-off, anything within 200 miles of the zip you enter works, and we only need the exact address on move day.</p>
+    <div class="field"><label for="beds">How many bedrooms are you moving?</label>
+      <select id="beds" required><option value="">Choose one</option><option>Studio</option><option>1 bedroom</option><option>2 bedrooms</option><option>3 bedrooms</option><option>4 bedrooms</option><option>5 or more bedrooms</option><option>Just a few items</option><option>Other</option></select></div>
+    <div class="field" id="bedsOtherWrap" hidden><label class="sub" for="bedsOther">Please specify</label><input id="bedsOther" type="text" placeholder="For example: storage unit, 2 offices, studio plus garage"></div>
+    <div class="row2">
+      <div class="field"><label for="phone">Mobile number</label><input id="phone" type="tel" inputmode="tel" autocomplete="tel" required></div>
+      <div class="field"><label for="email">Email (optional)</label><input id="email" type="text" inputmode="email" autocomplete="email"></div>
+    </div>
+    <div class="field"><label for="moveDate">Estimated move date</label><input id="moveDate" type="date" required></div>
+    <div class="savebox"><b>Book ahead and save thousands</b>
+      <ul class="bul" style="gap:8px">
+        <li><b>Change your date free.</b> Your date is a placeholder. Move it to any date in the next 2 calendar years (minus national holidays) and keep your price.</li>
+        <li><b>Booking ahead is the biggest way to save.</b> You get a much better rate, often 20 to 50% less, and it can add up to thousands.</li>
+        <li><b>All you need is a general zip code.</b> If you're definitely moving, and you're headed within 200 miles of that zip, you can lock in a floating reservation today.</li>
+      </ul>
+    </div>
+    <label class="consent"><input id="consent" type="checkbox"> I agree that my video and answers can be used to prepare my moving estimate.</label>
+    <p class="err" id="detailsErr" role="alert" hidden></p>
+    <button class="btn" type="submit">Continue</button>
+  </form>
+
+  <!-- Step 2: record or upload -->
+  <section id="capture" class="card" hidden>
+    <h2>Record your walkthrough</h2>
+    <div class="callout warn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" stroke="currentColor" stroke-width="2"/><path d="M5 11a7 7 0 0014 0M12 18v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><b>Say it out loud</b>As you film, say out loud anything that is NOT going with you, like "this couch is staying." We listen to the audio.</div></div>
+    <ul class="tips">
+      <li>Go room by room, slowly.</li>
+      <li>Open closets and cabinets.</li>
+      <li>Include the garage, patio, balcony and storage.</li>
+      <li>If something isn't moving, show it and say so.</li>
+    </ul>
+    <p class="note">On the phone with your mover? Stay on the call. The video may record without sound while you're on the phone, and that's fine.</p>
+    <div id="camWrap" class="cam" hidden>
+      <video id="preview" playsinline muted autoplay></video>
+      <div class="recbar" id="recbar"><span class="dot"></span><span id="timer">0:00</span></div>
+      <span class="soundtag" id="soundtag" hidden>No sound</span>
+    </div>
+    <p class="err" id="camErr" role="alert" hidden></p>
+    <button class="btn" id="startCam" type="button">Turn on camera</button>
+    <button class="btn" id="startRec" type="button" hidden>Start recording</button>
+    <button class="btn stop" id="stopRec" type="button" hidden>Stop recording</button>
+    <button class="linkbtn" id="noSound" type="button" hidden>Camera not starting? Try without sound</button>
+    <label class="btn secondary" id="uploadLabel" for="filePick">Upload a video instead</label>
+    <input id="filePick" type="file" accept="video/*" hidden>
+  </section>
+
+  <!-- Step 3: review and send -->
+  <section id="review" class="card" hidden>
+    <h2>Send your video</h2>
+    <video id="playback" class="playback" playsinline controls></video>
+    <p class="meta" id="clipMeta"></p>
+    <div id="progressWrap" hidden>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="bar"><i id="barFill"></i></div>
+      <p class="meta" id="progressText" style="margin-top:6px">Uploading…</p>
+    </div>
+    <p class="err" id="upErr" role="alert" hidden></p>
+    <button class="btn" id="send" type="button">Send video</button>
+    <button class="btn secondary" id="redo" type="button">Record again</button>
+  </section>
+
+  <!-- Analyzing -->
+  <section id="analyzing" class="card" hidden>
+    <h2 class="pulse">Analyzing your video</h2>
+    <p class="pct" id="pct">0%</p>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="abar"><i id="abarFill"></i></div>
+    <div class="stay"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l10 18H2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><div><b>Please don't close this page</b>We're analyzing your video right now. This can take several minutes, and your questions will appear here. Leaving this page will lose your place.</div></div>
+  </section>
+
+  <!-- Questions -->
+  <form id="questions" class="card" hidden novalidate>
+    <h2>A few quick questions</h2>
+    <p class="meta" id="qIntro">We went through your video. Help us get these right.</p>
+    <div id="qlist"></div>
+    <p class="err" id="qErr" role="alert" hidden></p>
+    <button class="btn" id="qSend" type="submit">Submit answers</button>
+  </form>
+
+  <!-- Step 4: quote -->
+  <section id="done" class="card" hidden>
+    <div id="quoteBox">
+      <div class="done">
+        <div class="check"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></div>
+        <h2 id="doneTitle">Your estimate</h2>
+        <p id="doneText"></p>
+      </div>
+      <p class="qprice" id="qPrice" style="font-size:26px;font-weight:800;text-align:center;margin:10px 0 4px"></p>
+      <p class="meta" id="qPack" style="text-align:center" hidden></p>
+      <p class="meta" id="qFine" style="text-align:center">This is an estimate. Your final price is confirmed once we go over the details with you.</p>
+      <a class="btn" id="qCall" href="#">Connect me with a mover now</a>
+      <button class="btn secondary" id="qSched" type="button">Schedule a follow-up</button>
+      <button class="btn secondary" id="qToo" type="button">No, that's too much</button>
+    </div>
+    <div id="discBox" hidden>
+      <h2 id="discQ"></h2>
+      <div id="discOpts"></div>
+      <button class="btn" id="discNext" type="button">Continue</button>
+    </div>
+    <div id="discEnd" hidden>
+      <h2 id="discEndTitle"></h2>
+      <p id="discEndText"></p>
+      <a class="btn" id="dCall" href="#">Call a mover now</a>
+      <button class="btn secondary" id="dSched" type="button">Schedule a call</button>
+    </div>
+  </section>
+
+  <div id="offer" class="modal" role="dialog" aria-modal="true" aria-labelledby="offerTitle" hidden>
+    <div class="box">
+      <span class="save">Book today, save $300</span>
+      <h2 id="offerTitle">Call in and get your move scheduled today</h2>
+      <p>Book today and get full flexibility on your move dates for the next 2 calendar years, plus an additional $300 off your move.</p>
+      <a class="btn" id="offerCall" href="#" hidden>Call in now for an additional $300 off</a>
+      <p class="meta" id="offerNum">Call <span class="repn"></span> at <a href="tel:7543050873"><b>754-305-0873</b></a>.</p>
+      <button class="btn secondary" id="offerClose" type="button">Not right now</button>
+    </div>
+  </div>
+
+  <div id="sched" class="modal" role="dialog" aria-modal="true" aria-labelledby="schedTitle" hidden>
+    <div class="box">
+      <h2 id="schedTitle">No problem. Pick a time for a call.</h2>
+      <p>Choose any time in the next 3 days between 7 AM and 9 PM Eastern, and <span class="repn"></span> will call you.</p>
+      <label class="label" for="schedDay">Day</label>
+      <select id="schedDay"></select>
+      <label class="label" for="schedTime">Time (Eastern)</label>
+      <select id="schedTime"></select>
+      <p class="meta" id="schedErr" hidden style="color:#b3261e"></p>
+      <button class="btn" id="schedGo" type="button">Schedule my call</button>
+      <button class="btn secondary" id="schedSkip" type="button">Skip</button>
+    </div>
+  </div>
+
+  <p class="foot">Your video is only used to prepare your moving estimate.</p>
+</main>
+
+<script>
+(function () {
+  const CONFIG = {
+    cloudName: 'awdkllag',
+    uploadPreset: 'walkthru_unsigned',
+    defaultRep: 'Christian',
+    callNumber: '754-305-0873',
+    maxMB: 95,
+    maxSeconds: 360,
+    videoBitrate: 2000000
+  };
+  const $ = id => document.getElementById(id);
+  // Link format: #christian  or  #christian-T4120051 (rep, plus an existing Granot job number)
+  let rawHash = '';
+  try { rawHash = decodeURIComponent(location.hash.replace('#', '')).trim(); } catch (e) { rawHash = location.hash.replace('#', '').trim(); }
+  const jobNo = '';
+  const src = rawHash.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 30);
+  const repName = CONFIG.defaultRep;
+  $('repName').textContent = repName;
+
+  let answers = {}, stream = null, recorder = null, chunks = [], bytes = 0, clip = null, clipName = 'walkthrough.mp4';
+  let started = 0, tick = null, hasSound = false, wakeLock = null, recordedSeconds = 0;
+
+  function show(id) {
+    ['welcome', 'details', 'capture', 'review', 'analyzing', 'questions', 'done'].forEach(s => { $(s).hidden = s !== id; });
+    $('stepsBar').hidden = id === 'welcome';
+    const n = { welcome: 0, details: 1, capture: 2, review: 3, analyzing: 3, questions: 3, done: 3 }[id];
+    ['s1', 's2', 's3'].forEach((s, i) => $(s).classList.toggle('on', i < n));
+    $('hero').hidden = !(id === 'welcome' || id === 'details');
+    window.scrollTo({ top: 0 });
+  }
+  const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  const clean = v => String(v || '').replace(/[|=\\]/g, ' ').trim().slice(0, 80);
+
+  // Welcome slides
+  let wi = 0;
+  const slides = Array.from(document.querySelectorAll('#welcome .sl')), wdots = Array.from(document.querySelectorAll('#welcome .dots span'));
+  function showSlide(i) {
+    wi = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((el, k) => { el.hidden = k !== wi; });
+    wdots.forEach((d, k) => d.classList.toggle('on', k === wi));
+    $('wBack').hidden = wi === 0;
+    $('wNext').textContent = wi === slides.length - 1 ? "Let's get started" : 'Next';
+    if (wi) $('welcome').scrollIntoView({ block: 'start' });
+  }
+  $('wNext').addEventListener('click', () => { if (wi === slides.length - 1) show('details'); else showSlide(wi + 1); });
+  $('wBack').addEventListener('click', () => showSlide(wi - 1));
+  $('beds').addEventListener('change', () => { $('bedsOtherWrap').hidden = $('beds').value !== 'Other'; });
+  document.querySelectorAll('input[name=storage]').forEach(r => r.addEventListener('change', () => {
+    const v = (document.querySelector('input[name=storage]:checked') || {}).value;
+    $('storLenWrap').hidden = !(v === 'yes' || v === 'maybe');
+  }));
+
+  // Step 1
+  $('details').addEventListener('submit', e => {
+    e.preventDefault();
+    const first = $('first').value.trim(), last = $('last').value.trim();
+    const fromZip = $('fromZip').value.trim(), toZip = $('toZip').value.trim();
+    const fromAddr = $('fromAddr').value.trim(), fromCity = $('fromCity').value.trim(), fromState = $('fromState').value.trim().toUpperCase();
+    const toAddr = $('toAddr').value.trim(), toCity = $('toCity').value.trim(), toState = $('toState').value.trim().toUpperCase();
+    const bedsSel = $('beds').value, bedsOther = $('bedsOther').value.trim();
+    const beds = bedsSel === 'Other' ? (bedsOther ? 'Other: ' + bedsOther : 'Other') : bedsSel;
+    const moveDate = $('moveDate').value;
+    const phone = $('phone').value.replace(/[^0-9]/g, '').replace(/^1(?=\d{10}$)/, '');
+    const email = $('email').value.trim();
+    const packing = (document.querySelector('input[name=packing]:checked') || {}).value;
+    const storage = (document.querySelector('input[name=storage]:checked') || {}).value;
+    const storLen = (storage === 'yes' || storage === 'maybe') ? $('storLen').value : '';
+    const problems = [];
+    if (!first || !last) problems.push('your first and last name');
+    if (phone.length !== 10) problems.push('a 10-digit mobile number');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push('a valid email (or leave it blank)');
+    const okSt = v => !v || /^[A-Z]{2}$/.test(v), okZip = v => !v || /^\d{5}$/.test(v);
+    if (!(fromZip || fromState) || !okSt(fromState) || !okZip(fromZip)) problems.push('a zip code or state to move from (zip is 5 digits, state is 2 letters)');
+    if (!(toZip || toState) || !okSt(toState) || !okZip(toZip)) problems.push('a zip code or state to move to (zip is 5 digits, state is 2 letters)');
+    if (!beds) problems.push('how many bedrooms');
+    if (beds === 'Other' && !bedsOther) problems.push('what you are moving (the Other box)');
+    if (!moveDate) problems.push('your move date');
+    if (!packing) problems.push('your packing choice');
+    if (!storage) problems.push('whether you may need storage');
+    if ((storage === 'yes' || storage === 'maybe') && !storLen) problems.push('about how long you would need storage');
+    if (!$('consent').checked) problems.push('the checkbox to agree');
+    if (problems.length) { $('detailsErr').textContent = 'Please add ' + problems.join(', ') + '.'; $('detailsErr').hidden = false; return; }
+    $('detailsErr').hidden = true;
+    answers = { first, last, phone, email, from_addr: fromAddr, from_city: fromCity, from_state: fromState, from_zip: fromZip, to_addr: toAddr, to_city: toCity, to_state: toState, to_zip: toZip, bedrooms: beds, move_date: moveDate, packing, storage, storage_len: storLen, rep: repName, src: src };
+    if (jobNo) answers.job = jobNo;
+    show('capture');
+  });
+
+  // Step 2: camera
+  async function openCamera(withSound) {
+    $('camErr').hidden = true;
+    const video = { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } };
+    stopStream();
+    try {
+      if (withSound) {
+        try { stream = await navigator.mediaDevices.getUserMedia({ video, audio: true }); }
+        catch (e) { stream = await navigator.mediaDevices.getUserMedia({ video, audio: false }); }
+      } else {
+        stream = await navigator.mediaDevices.getUserMedia({ video, audio: false });
+      }
+    } catch (err) {
+      $('camErr').textContent = 'We couldn\'t turn on your camera. Allow camera access for this page, or tap "Upload a video instead."';
+      $('camErr').hidden = false;
+      $('noSound').hidden = false;
+      return;
+    }
+    const a = stream.getAudioTracks()[0];
+    hasSound = !!(a && a.readyState === 'live' && !a.muted);
+    if (a && !hasSound) { a.stop(); stream.removeTrack(a); }
+    $('soundtag').hidden = hasSound;
+    $('preview').srcObject = stream;
+    try { await $('preview').play(); } catch (e) {}
+    $('camWrap').hidden = false;
+    $('startCam').hidden = true;
+    $('startRec').hidden = false;
+    $('noSound').hidden = false;
+    $('recbar').classList.remove('live');
+    $('timer').textContent = 'Ready';
+  }
+  function stopStream() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
+  function pickMime() {
+    const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+    return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+  }
+
+  $('startCam').addEventListener('click', () => openCamera(true));
+  $('noSound').addEventListener('click', () => openCamera(false));
+
+  $('startRec').addEventListener('click', async () => {
+    if (!stream) return;
+    if (!window.MediaRecorder) {
+      $('camErr').textContent = 'This browser can\'t record here. Tap "Upload a video instead" and pick a video you took.';
+      $('camErr').hidden = false; return;
+    }
+    const mime = pickMime();
+    const opts = { videoBitsPerSecond: CONFIG.videoBitrate, audioBitsPerSecond: 64000 };
+    if (mime) opts.mimeType = mime;
+    try { recorder = new MediaRecorder(stream, opts); }
+    catch (e) { recorder = new MediaRecorder(stream); }
+    chunks = []; bytes = 0;
+    recorder.ondataavailable = ev => {
+      if (ev.data && ev.data.size) {
+        chunks.push(ev.data); bytes += ev.data.size;
+        if (bytes > CONFIG.maxMB * 1024 * 1024 * 0.96 && recorder.state === 'recording') recorder.stop();
+      }
+    };
+    recorder.onstop = finishRecording;
+    recorder.onerror = () => { if (recorder.state !== 'inactive') recorder.stop(); };
+    recorder.start(1000);
+    started = Date.now();
+    $('recbar').classList.add('live');
+    tick = setInterval(() => {
+      const s = (Date.now() - started) / 1000;
+      $('timer').textContent = fmt(s);
+      if (s >= CONFIG.maxSeconds && recorder.state === 'recording') recorder.stop();
+    }, 500);
+    try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) { wakeLock = null; }
+    $('startRec').hidden = true;
+    $('stopRec').hidden = false;
+    $('noSound').hidden = true;
+    $('uploadLabel').hidden = true;
+  });
+
+  $('stopRec').addEventListener('click', () => { if (recorder && recorder.state === 'recording') recorder.stop(); });
+
+  function finishRecording() {
+    clearInterval(tick);
+    recordedSeconds = Math.round((Date.now() - started) / 1000);
+    if (wakeLock) { try { wakeLock.release(); } catch (e) {} wakeLock = null; }
+    const type = (recorder && recorder.mimeType) || pickMime() || 'video/mp4';
+    clip = new Blob(chunks, { type: type.split(';')[0] });
+    clipName = type.indexOf('webm') >= 0 ? 'walkthrough.webm' : 'walkthrough.mp4';
+    stopStream();
+    $('camWrap').hidden = true;
+    $('stopRec').hidden = true;
+    $('startCam').hidden = false;
+    $('uploadLabel').hidden = false;
+    toReview((hasSound ? 'With sound' : 'No sound') + ' · ' + fmt(recordedSeconds));
+  }
+
+  $('filePick').addEventListener('change', () => {
+    const f = $('filePick').files[0];
+    if (!f) return;
+    if (f.size > CONFIG.maxMB * 1024 * 1024) {
+      $('camErr').textContent = 'That video is ' + Math.round(f.size / 1048576) + ' MB, over our ' + CONFIG.maxMB + ' MB limit. Please record it here instead, or send a shorter video.';
+      $('camErr').hidden = false; $('filePick').value = ''; return;
+    }
+    stopStream();
+    clip = f; clipName = f.name || 'walkthrough.mp4'; hasSound = true; recordedSeconds = 0;
+    toReview('From your phone');
+  });
+
+  function toReview(label) {
+    const url = URL.createObjectURL(clip);
+    $('playback').src = url;
+    $('clipMeta').textContent = label + ' · ' + (clip.size / 1048576).toFixed(1) + ' MB';
+    $('upErr').hidden = true; $('progressWrap').hidden = true;
+    $('send').disabled = false; $('redo').disabled = false;
+    show('review');
+  }
+
+  $('redo').addEventListener('click', () => { clip = null; $('filePick').value = ''; show('capture'); });
+
+  // Analyzing, then questions
+  const RESULT_BASE = location.href.split('#')[0].replace(/[^/]*$/, '') + 'results/';
+  let quote = null;
+  const RANGES = [[300, 2000, 4000], [600, 3000, 6000], [900, 4000, 8000], [1200, 5000, 10000], [1800, 8000, 15000]];
+  const money = n => '$' + n.toLocaleString('en-US');
+  const telHref = () => 'tel:' + CONFIG.callNumber.replace(/[^0-9+]/g, '');
+  function sendEvent(name, detail) {
+    const png = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), c => c.charCodeAt(0));
+    const ctx = ['uid=' + answers.uid, 'event=' + name, 'detail=' + clean(detail || ''), 'first=' + clean(answers.first), 'phone=' + clean(answers.phone)].join('|');
+    const fd = new FormData();
+    fd.append('upload_preset', CONFIG.uploadPreset); fd.append('tags', 'quote_event'); fd.append('context', ctx);
+    fd.append('file', new Blob([png], { type: 'image/png' }), 'e.png');
+    fetch('https://api.cloudinary.com/v1_1/' + CONFIG.cloudName + '/image/upload', { method: 'POST', body: fd }).catch(() => {});
+  }
+  function openSched() { buildSched(); $('schedErr').hidden = true; $('schedGo').disabled = false; $('sched').hidden = false; }
+  function showBox(id) { ['quoteBox', 'discBox', 'discEnd'].forEach(x => { $(x).hidden = x !== id; }); window.scrollTo(0, 0); }
+  function finish(msg) {
+    $('doneTitle').textContent = 'Thanks, ' + answers.first + '!';
+    $('qCall').href = telHref(); $('dCall').href = telHref();
+    const cf = quote && +quote.cf;
+    if (!msg && cf) {
+      $('doneText').textContent = 'About ' + Math.round(cf) + ' cubic feet from your video.';
+      const r = RANGES.find(x => cf <= x[0]);
+      if (r) {
+        $('qPrice').textContent = 'Estimated move cost ' + money(r[1]) + ' to ' + money(r[2]);
+        const pc = +quote.packCost || 0;
+        if (pc > 0) { $('qPack').textContent = 'plus ' + money(pc) + ' for packing' + (quote.packNote ? ' (' + quote.packNote + ')' : ''); $('qPack').hidden = false; $('qPrice').textContent += ' plus packing'; }
+        $('qToo').hidden = false;
+      } else {
+        $('qPrice').textContent = 'Large move. Call us for a custom quote.';
+        $('qFine').hidden = true; $('qToo').hidden = true;
+      }
+    } else {
+      $('doneText').textContent = msg || 'We are preparing your estimate.';
+      $('qPrice').textContent = ''; $('qToo').hidden = true;
+    }
+    showBox('quoteBox'); show('done'); ding();
+    sendEvent('quote_shown', cf ? Math.round(cf) + 'cf' : 'none');
+  }
+  $('qCall').addEventListener('click', () => sendEvent('call_tap', 'quote'));
+  $('dCall').addEventListener('click', () => sendEvent('call_tap', 'discount'));
+  $('qSched').addEventListener('click', openSched);
+  $('dSched').addEventListener('click', openSched);
+  const DISC = [
+    { q: 'Are you, or is anyone involved with the move, a senior, a veteran or in law enforcement?', o: ['Senior', 'Veteran', 'Law enforcement'] },
+    { q: 'Are you, or is anyone involved with the move, in the medical field, an educator or a student?', o: ['Medical field', 'Educator', 'Student'] },
+    { q: 'Are you an AAA or AARP member?', o: ['AAA', 'AARP'] }
+  ];
+  let discStep = 0;
+  function discShow() {
+    const d = DISC[discStep];
+    $('discQ').textContent = d.q;
+    $('discOpts').innerHTML = '<div class="choices">' + d.o.map(x => '<label class="choice"><input type="checkbox" value="' + x + '"> ' + x + '</label>').join('') + '</div><p class="meta">Check any that apply, or leave blank if none.</p>';
+    showBox('discBox');
+  }
+  $('qToo').addEventListener('click', () => { sendEvent('too_much', ''); discStep = 0; discShow(); });
+  $('discNext').addEventListener('click', () => {
+    const hit = [...document.querySelectorAll('#discOpts input:checked')].map(i => i.value);
+    if (hit.length) {
+      sendEvent('discount_eligible', hit.join('+'));
+      $('discEndTitle').textContent = 'You may be eligible for an additional discount';
+      $('discEndText').textContent = 'Call ' + CONFIG.callNumber + ' or schedule a call, and ' + repName + ' will confirm it with you.';
+      showBox('discEnd'); return;
+    }
+    if (++discStep < DISC.length) { discShow(); return; }
+    sendEvent('discount_none', '');
+    $('discEndTitle').textContent = 'Checking for specials in your area';
+    $('discEndText').textContent = 'Call ' + CONFIG.callNumber + ' or schedule a call, and ' + repName + ' will go over any specials available for your move.';
+    showBox('discEnd');
+  });
+  document.querySelectorAll('.repn').forEach(e => { e.textContent = repName; });
+  window.__wt = { finish: finish, demo: (a, q) => { answers = a; quote = q; finish(); } };
+  // Sounds: unlocked by the customer's first tap (browsers block audio before that)
+  let actx = null;
+  const unlock = () => { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {} };
+  ['click', 'touchstart', 'keydown'].forEach(ev => document.addEventListener(ev, unlock, { passive: true }));
+  function ding() {
+    try {
+      unlock(); if (!actx) return;
+      const t = actx.currentTime;
+      [[880, 0], [1320, 0.12]].forEach(([f, d]) => {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = 'sine'; o.frequency.value = f; o.connect(g); g.connect(actx.destination);
+        g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.35, t + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.9);
+        o.start(t + d); o.stop(t + d + 1);
+      });
+    } catch (e) {}
+  }
+  // Schedule-a-call (Eastern time, next 3 days, 7 AM to 9 PM)
+  const ET = 'America/New_York';
+  function etParts(d) {
+    const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: ET, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false, weekday: 'short', month_: 'short' }).formatToParts(d).forEach(x => p[x.type] = x.value);
+    return { y: +p.year, m: +p.month, d: +p.day, h: (+p.hour) % 24, min: +p.minute };
+  }
+  function buildSched() {
+    const now = etParts(new Date());
+    const nowMin = now.h * 60 + now.min + 60; // at least an hour from now
+    const days = [];
+    for (let i = 0; i < 3; i++) {
+      const dt = new Date(Date.UTC(now.y, now.m - 1, now.d + i, 12));
+      const label = (i === 0 ? 'Today, ' : i === 1 ? 'Tomorrow, ' : '') + dt.toLocaleDateString('en-US', { timeZone: 'UTC', weekday: 'long', month: 'short', day: 'numeric' });
+      const iso = dt.toISOString().slice(0, 10);
+      const slots = [];
+      for (let m = 7 * 60; m <= 21 * 60; m += 30) { if (i === 0 && m < nowMin) continue; slots.push(m); }
+      if (slots.length) days.push({ iso, label, slots });
+    }
+    $('schedDay').innerHTML = days.map((d, k) => '<option value="' + k + '">' + d.label + '</option>').join('');
+    const fill = () => {
+      const d = days[+$('schedDay').value];
+      $('schedTime').innerHTML = d.slots.map(m => { const h = Math.floor(m / 60), mm = m % 60; const lab = ((h + 11) % 12 + 1) + ':' + String(mm).padStart(2, '0') + ' ' + (h < 12 ? 'AM' : 'PM'); return '<option value="' + m + '">' + lab + '</option>'; }).join('');
+    };
+    $('schedDay').onchange = fill; fill();
+    $('schedDay')._days = days;
+  }
+  $('offerClose').addEventListener('click', () => {
+    $('offer').hidden = true;
+    buildSched(); $('schedErr').hidden = true; $('schedGo').disabled = false;
+    document.querySelectorAll('.repn').forEach(e => { e.textContent = repName; });
+    $('sched').hidden = false;
+  });
+  $('schedSkip').addEventListener('click', () => { $('sched').hidden = true; });
+  $('schedGo').addEventListener('click', async () => {
+    const days = $('schedDay')._days, d = days[+$('schedDay').value], m = +$('schedTime').value;
+    const h = Math.floor(m / 60), mm = m % 60;
+    const timeLab = $('schedTime').selectedOptions[0].textContent;
+    const when = d.iso + ' ' + String(h).padStart(2, '0') + ':' + String(mm).padStart(2, '0') + ' ET';
+    const out = { uid: answers.uid, job: answers.job || '', first: answers.first, last: answers.last, phone: answers.phone, when: when, label: d.label.replace(/,/g, '') + ' at ' + timeLab + ' ET' };
+    $('schedGo').disabled = true;
+    const png = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), c => c.charCodeAt(0));
+    const ctx = Object.keys(out).map(k => k + '=' + clean(out[k])).join('|');
+    for (let a = 0; a < 3; a++) {
+      try {
+        const fd = new FormData();
+        fd.append('upload_preset', CONFIG.uploadPreset); fd.append('tags', 'quote_callback'); fd.append('context', ctx);
+        fd.append('file', new Blob([png], { type: 'image/png' }), 'c.png');
+        const r = await fetch('https://api.cloudinary.com/v1_1/' + CONFIG.cloudName + '/image/upload', { method: 'POST', body: fd });
+        if (!r.ok) throw new Error('x');
+        $('schedTitle').textContent = 'You\'re booked';
+        $('sched').querySelector('p').textContent = repName + ' will call you ' + out.label + '.';
+        ['schedDay', 'schedTime', 'schedGo'].forEach(i => $(i).hidden = true); $('schedTime').previousElementSibling.hidden = true; $('schedDay').previousElementSibling.hidden = true;
+        $('schedSkip').textContent = 'Close';
+        return;
+      } catch (err) { await new Promise(z => setTimeout(z, 1200)); }
+    }
+    $('schedErr').textContent = 'That didn\'t send. Check your connection and try again.'; $('schedErr').hidden = false; $('schedGo').disabled = false;
+  });
+  $('offerCall').addEventListener('click', e => {
+    const num = (CONFIG.callNumber || '').replace(/[^0-9+]/g, '');
+    const touch = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent);
+    if (!touch) { // desktop browsers often have no phone app: show the number instead
+      e.preventDefault();
+      $('offerNum').innerHTML = 'Call <b>' + CONFIG.callNumber + '</b> from your phone.';
+      try { navigator.clipboard.writeText(CONFIG.callNumber); } catch (x) {}
+    }
+  });
+  function startAnalyzing(uid) {
+    show('analyzing');
+    const t0 = Date.now();
+    let pct = 0, stopped = false, asked = false, paused = false, answeredAt = 0;
+    const setPct = p => { pct = p; $('pct').textContent = Math.floor(p) + '%'; $('abarFill').style.width = p + '%'; $('abar').setAttribute('aria-valuenow', Math.floor(p)); };
+    setPct(0);
+    const tick = setInterval(() => {
+      if (stopped || paused) return;
+      // 0 to 80% while Claude analyzes the video; 80 to 99% after the customer answers, until the quote is entered
+      if (!answeredAt) { const sec = (Date.now() - t0) / 1000; setPct(Math.min(79, Math.max(pct, 80 * (1 - Math.exp(-sec / 150))))); }
+      else { const sec = (Date.now() - answeredAt) / 1000; setPct(Math.min(99, Math.max(pct, 80 + 19 * (1 - Math.exp(-sec / 300))))); }
+    }, 500);
+    const poll = async () => {
+      if (stopped) return;
+      if (!paused) {
+        try {
+          const r = await fetch(RESULT_BASE + uid + '.json?x=' + Date.now(), { cache: 'no-store' });
+          if (r.ok) {
+            const res = await r.json();
+            if (res.questions && res.questions.length && !asked) {
+              asked = true; paused = true; setPct(80);
+              showQuestions(uid, res.questions, res.intro || '', () => { paused = false; answeredAt = Date.now(); show('analyzing'); });
+            } else if (res.done && !(res.questions && res.questions.length && !asked)) {
+              quote = res; stopped = true; clearInterval(tick);
+              for (let p = Math.floor(pct); p <= 100; p += 2) { setPct(Math.min(100, p)); await new Promise(z => setTimeout(z, 40)); }
+              setPct(100);
+              await new Promise(z => setTimeout(z, 600));
+              finish();
+              return;
+            }
+          }
+        } catch (e) {}
+        if ((Date.now() - t0) > 90 * 60 * 1000) { stopped = true; clearInterval(tick); finish(repName + ' will follow up with your estimate.'); return; }
+      }
+      setTimeout(poll, 10000);
+    };
+    setTimeout(poll, 8000);
+  }
+  function showQuestions(uid, qs, intro, after) {
+    $('qIntro').textContent = intro || 'We went through your video. Help us get these right.';
+    $('qlist').innerHTML = qs.map(q => '<fieldset class="q" style="border:0;padding:0;margin:0 0 14px"><legend class="label" style="margin-bottom:6px">' + q.text.replace(/[<>&]/g, '') + '</legend><div class="choices">' +
+      q.options.map(o => '<label class="choice"><input type="radio" name="q_' + q.id + '" value="' + o.key + '"> ' + o.label.replace(/[<>&]/g, '') + '</label>').join('') + '</div></fieldset>').join('');
+    show('questions'); ding();
+    $('questions').onsubmit = async e => {
+      e.preventDefault();
+      const out = { uid: uid };
+      for (const q of qs) { const c = document.querySelector('input[name=q_' + q.id + ']:checked'); if (!c) { $('qErr').textContent = 'Please answer every question.'; $('qErr').hidden = false; return; } out['q_' + q.id] = c.value; }
+      $('qErr').hidden = true; $('qSend').disabled = true;
+      const png = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), c => c.charCodeAt(0));
+      const ctx = Object.keys(out).map(k => k + '=' + clean(out[k])).join('|');
+      for (let a = 0; a < 3; a++) {
+        try {
+          const fd = new FormData();
+          fd.append('upload_preset', CONFIG.uploadPreset); fd.append('tags', 'quote_answers'); fd.append('context', ctx);
+          fd.append('file', new Blob([png], { type: 'image/png' }), 'a.png');
+          const r = await fetch('https://api.cloudinary.com/v1_1/' + CONFIG.cloudName + '/image/upload', { method: 'POST', body: fd });
+          if (!r.ok) throw new Error('x');
+          after(); return;
+        } catch (err) { await new Promise(z => setTimeout(z, 1200)); }
+      }
+      $('qErr').textContent = 'That didn\'t send. Check your connection and tap Submit again.'; $('qErr').hidden = false; $('qSend').disabled = false;
+    };
+  }
+
+  // Step 3: chunked upload to Cloudinary
+  function postChunk(url, fd, uid, from, to, total, onProgress) {
+    return new Promise((resolve, reject) => {
+      const x = new XMLHttpRequest();
+      x.open('POST', url);
+      x.setRequestHeader('X-Unique-Upload-Id', uid);
+      x.setRequestHeader('Content-Range', 'bytes ' + from + '-' + to + '/' + total);
+      x.upload.onprogress = ev => { if (ev.lengthComputable) onProgress(ev.loaded / ev.total); };
+      x.onload = () => {
+        if (x.status >= 200 && x.status < 300) { try { resolve(JSON.parse(x.responseText)); } catch (e) { resolve({}); } }
+        else { let m = 'Upload failed (' + x.status + ')'; try { m = JSON.parse(x.responseText).error.message; } catch (e) {} reject(new Error(m)); }
+      };
+      x.onerror = () => reject(new Error('Network problem'));
+      x.send(fd);
+    });
+  }
+
+  $('send').addEventListener('click', async () => {
+    if (!clip) return;
+    $('send').disabled = true; $('redo').disabled = true;
+    $('upErr').hidden = true; $('progressWrap').hidden = false;
+    const url = 'https://api.cloudinary.com/v1_1/' + CONFIG.cloudName + '/video/upload';
+    const uid = 'wt' + Date.now() + Math.random().toString(36).slice(2, 10);
+    answers.uid = uid;
+    const ctx = Object.assign({}, answers, { sound: hasSound ? 'yes' : 'no', seconds: String(recordedSeconds || '') });
+    const context = Object.keys(ctx).filter(k => clean(ctx[k]) !== '').map(k => k + '=' + clean(ctx[k])).join('|');
+    const size = clip.size, CH = 8 * 1024 * 1024;
+    let start = 0;
+    try {
+      while (start < size) {
+        const end = Math.min(start + CH, size);
+        let attempt = 0, done = false;
+        while (!done) {
+          const fd = new FormData();
+          fd.append('file', clip.slice(start, end), clipName);
+          fd.append('upload_preset', CONFIG.uploadPreset);
+          fd.append('tags', 'quote');
+          fd.append('context', context);
+          try {
+            await postChunk(url, fd, uid, start, end - 1, size, p => {
+              const pct = Math.round(((start + p * (end - start)) / size) * 100);
+              $('barFill').style.width = pct + '%'; $('bar').setAttribute('aria-valuenow', pct);
+              $('progressText').textContent = 'Uploading… ' + pct + '%';
+            });
+            done = true;
+          } catch (err) {
+            attempt++;
+            if (attempt >= 3) throw err;
+            await new Promise(r => setTimeout(r, 1500 * attempt));
+          }
+        }
+        start = end;
+      }
+      startAnalyzing(uid);
+    } catch (err) {
+      $('upErr').textContent = 'The upload didn\'t finish: ' + err.message + '. Check your connection and tap Send video again.';
+      $('upErr').hidden = false;
+      $('send').disabled = false; $('redo').disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
