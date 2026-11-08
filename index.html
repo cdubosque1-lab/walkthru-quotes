@@ -119,6 +119,14 @@ input[type=text],input[type=date],input[type=tel],select{border-radius:12px;bord
 details.more{font-size:14px;color:var(--muted)}
 details.more summary{cursor:pointer;font-weight:700;color:var(--accent-text)}
 .navrow{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.more{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
+.morelead{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 8px}
+.more details{border-bottom:1px solid var(--line)}
+.more details>summary{list-style:none;cursor:pointer;padding:13px 26px 13px 0;font-weight:700;font-size:15px;position:relative}
+.more details>summary::-webkit-details-marker{display:none}
+.more details>summary::after{content:"";position:absolute;right:6px;top:50%;width:8px;height:8px;margin-top:-6px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+.more details[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+.more details>*:not(summary){margin-bottom:12px}
 .sect-intro{display:flex;flex-direction:column;gap:10px}
 .hint{font-size:13px;color:var(--muted)}
 .savebox{padding:14px;border-radius:14px;border:1px dashed var(--accent);background:var(--accent-soft);display:flex;flex-direction:column;gap:6px;font-size:14px}
@@ -135,8 +143,8 @@ select{appearance:auto}
 <main class="app">
   <header class="hero" id="hero">
     <div class="brandbar"><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h12v9H3zM15 10h4l2 3v3h-6z" fill="#fff"/><circle cx="7" cy="17" r="2" fill="#12315A" stroke="#fff"/><circle cx="17" cy="17" r="2" fill="#12315A" stroke="#fff"/></svg></i>Walkthru</div>
-    <h1>Take the guesswork out of moving.</h1>
-    <p class="lead">Get an accurate moving estimate from a quick video of your home. About 5 to 10 minutes. <span id="repName" hidden>Christian</span></p>
+    <h1>Get a real moving price from a 5-minute video.</h1>
+    <p class="lead">No house call. No guessing over the phone. Walk through your home on your phone and get an accurate estimate. <span id="repName" hidden>Christian</span></p>
     <svg viewBox="0 0 560 190" role="img" aria-label="Movers carrying boxes beside a moving truck" xmlns="http://www.w3.org/2000/svg">
 <rect x="0" y="160" width="560" height="30" fill="#0B2342"/>
 <rect x="0" y="158" width="560" height="4" fill="#26507F"/>
@@ -165,26 +173,23 @@ select{appearance:auto}
   </header>
   <div class="steps" id="stepsBar" aria-hidden="true" hidden><span id="s1" class="on"></span><span id="s2"></span><span id="s3"></span></div>
 
-  <!-- Welcome slides -->
-  <section id="welcome" class="card slide" aria-live="polite">
-    <div class="dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div class="sl" data-i="0">
-      <div class="sect-intro">
-        <span class="kick">Why Walkthru</span>
-        <h2>Accurate inventory. Accurate price.</h2>
-        <span class="pill">No surprises on move day</span>
-        <ul class="bul">
-          <li><b>Nobody can price a move they haven't seen.</b> Movers who guess at your inventory can add "it wasn't on the list" charges on move day.</li>
-          <li><b>House calls cost you.</b> Companies that still do in-home estimates typically add about 20 to 30% to the total cost of the move to send someone out for a physical inventory.</li>
-          <li><b>We solved that.</b> With Walkthru, you get an accurate inventory and an accurate price from a reliable mover, built from your own video.</li>
-        </ul>
-      </div>
+  <!-- Start (cold traffic: one screen, then straight into the flow) -->
+  <section id="welcome" class="card slide">
+    <div class="sect-intro">
+      <h2>Here's how you get a real price</h2>
+      <ul class="bul">
+        <li><b>You record, we count.</b> Walk through your home on your phone. We build the actual inventory from what we see, not a guess.</li>
+        <li><b>Nobody comes to your house.</b> Companies that send someone out typically add about 20 to 30% to the cost of the move to cover it.</li>
+        <li><b>Free, and no obligation.</b> Get your estimate, then decide.</li>
+      </ul>
     </div>
-    <div class="sl" data-i="1" hidden>
-      <div class="sect-intro">
-        <span class="kick">How it works</span>
-        <h2>The whole move, handled</h2>
-        <span class="pill">All included. No extra charge.</span>
+    <button class="btn" id="wNext" type="button">Start my free estimate</button>
+    <p class="meta" style="text-align:center">Takes about 5 to 10 minutes. Your video is only used to prepare your estimate.</p>
+
+    <div class="more">
+      <p class="morelead">More about your move</p>
+      <details>
+        <summary>What's included on every move</summary>
         <ol class="stepsl">
           <li><div><b>Walkthrough photos</b><span>We document everything so it arrives in the same condition it left.</span></div></li>
           <li><div><b>Disassembly</b><span>All standard furniture, taken apart for you.</span></div></li>
@@ -193,50 +198,35 @@ select{appearance:auto}
           <li><div><b>Unloading and setup, done by our crew</b><span>Our crew unloads, unwraps and reassembles everything. You're the foreman: point, and the crew places it.</span></div></li>
           <li><div><b>Clean sweep</b><span>The crew takes the pads, wrap and debris with them.</span></div></li>
         </ol>
-      </div>
-    </div>
-    <div class="sl" data-i="2" hidden>
-      <div class="sect-intro">
-        <span class="kick">Your choice</span>
-        <h2>Pack as little or as much as you want</h2>
+      </details>
+      <details>
+        <summary>Pack as little or as much as you want</summary>
         <div class="perk"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M6 14l16-8 16 8v18l-16 8-16-8z" fill="#E4B27A" stroke="#8A5A28" stroke-width="2" stroke-linejoin="round"/><path d="M6 14l16 8 16-8M22 22v18" stroke="#8A5A28" stroke-width="2"/></svg><div><b>Boxes, mirrors, artwork and TVs</b><span>Want help packing any of it? We offer it, and we supply the boxes, including TV boxes.</span></div></div>
         <div class="perk"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#12315A" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="#12315A" stroke-width="2.4" stroke-linecap="round"/></svg><div><b>Or do it all yourself</b><span>Your call. Tell us what you'd like on the next page, and you can change your mind later.</span></div></div>
-      </div>
-    </div>
-    <div class="sl" data-i="3" hidden>
-      <div class="sect-intro">
-        <span class="kick">The biggest way to save</span>
-        <h2>Book ahead and save thousands</h2>
+      </details>
+      <details>
+        <summary>Book ahead and save thousands</summary>
         <span class="pill">Change your date free. Keep your price.</span>
         <ul class="bul">
           <li><b>Book early, pay less.</b> Moves are priced like airline tickets: the earlier you reserve, the better your rate. Booking ahead can save you thousands, often 20 to 50%.</li>
           <li><b>Floating reservation.</b> Your date is just a placeholder. Change it to any date in the next 2 calendar years (minus national holidays), free, and keep your price.</li>
           <li><b>All you need:</b> to know you're definitely moving within the next 2 calendar years, plus a general zip code within 200 miles of where you're headed. No exact drop-off address or exact date needed.</li>
         </ul>
-      </div>
-    </div>
-    <div class="sl" data-i="4" hidden>
-      <div class="sect-intro">
-        <span class="kick">Quality assurance</span>
-        <h2>Your list isn't set in stone</h2>
-        <span class="pill">Change it any time before move day</span>
+      </details>
+      <details>
+        <summary>Your list isn't set in stone</summary>
         <ul class="bul">
           <li><b>Not sure what's going? That's normal.</b> Things change between now and move day, and we expect that.</li>
           <li><b>One last review call.</b> 3 to 5 days before your move, our quality assurance team calls to go over your inventory with you one final time.</li>
           <li><b>Add or remove anything.</b> Bought a new TV? Sold the dining table? Fewer boxes than we listed? Tell us then, and your price is adjusted to match. Anything you take off, you don't pay for.</li>
-          <li><b>No surprises.</b> Every change is settled before move day.</li>
         </ul>
-      </div>
-    </div>
-    <div class="sl" data-i="5" hidden>
-      <div class="sect-intro">
-        <span class="kick">Bonus</span>
-        <h2>30 days of free storage</h2>
+      </details>
+      <details>
+        <summary>30 days of free storage</summary>
         <div class="perk"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M6 18l16-10 16 10v20H6z" fill="#E3F1EA" stroke="#1D5A3C" stroke-width="2" stroke-linejoin="round"/><rect x="15" y="24" width="14" height="14" fill="#1D5A3C"/><path d="M22 24v14" stroke="#E3F1EA" stroke-width="2"/></svg><div><b>Free storage and free redelivery</b><span>Hold your items for up to 30 days at no charge, then we deliver them to your final destination, also free.</span></div></div>
         <p class="meta">Need longer? After the first 30 days it's $0.50 per cubic foot. Once we have your inventory, we'll tell you your exact monthly rate. We can hold your items for up to 2 years.</p>
-      </div>
+      </details>
     </div>
-    <div class="navrow"><button class="btn secondary" id="wBack" type="button" hidden>Back</button><button class="btn" id="wNext" type="button">Next</button></div>
   </section>
 
   <!-- Step 1: details -->
@@ -453,19 +443,7 @@ select{appearance:auto}
   const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
   const clean = v => String(v || '').replace(/[|=\\]/g, ' ').trim().slice(0, 80);
 
-  // Welcome slides
-  let wi = 0;
-  const slides = Array.from(document.querySelectorAll('#welcome .sl')), wdots = Array.from(document.querySelectorAll('#welcome .dots span'));
-  function showSlide(i) {
-    wi = Math.max(0, Math.min(slides.length - 1, i));
-    slides.forEach((el, k) => { el.hidden = k !== wi; });
-    wdots.forEach((d, k) => d.classList.toggle('on', k === wi));
-    $('wBack').hidden = wi === 0;
-    $('wNext').textContent = wi === slides.length - 1 ? "Let's get started" : 'Next';
-    if (wi) $('welcome').scrollIntoView({ block: 'start' });
-  }
-  $('wNext').addEventListener('click', () => { if (wi === slides.length - 1) show('details'); else showSlide(wi + 1); });
-  $('wBack').addEventListener('click', () => showSlide(wi - 1));
+  $('wNext').addEventListener('click', () => show('details'));
   $('beds').addEventListener('change', () => { $('bedsOtherWrap').hidden = $('beds').value !== 'Other'; });
   document.querySelectorAll('input[name=storage]').forEach(r => r.addEventListener('change', () => {
     const v = (document.querySelector('input[name=storage]:checked') || {}).value;
