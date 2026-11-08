@@ -373,6 +373,7 @@ select{appearance:auto}
       <p class="meta" id="qPack" style="text-align:center" hidden></p>
       <p class="meta" id="qFine" style="text-align:center">This is an estimate. Your final price is confirmed once we go over the details with you.</p>
       <a class="btn" id="qCall" href="#">Connect me with a mover now</a>
+      <p class="meta" id="qClosed" style="text-align:center" hidden></p>
       <button class="btn secondary" id="qSched" type="button">Schedule a follow-up</button>
       <button class="btn secondary" id="qToo" type="button">No, that's too much</button>
     </div>
@@ -384,7 +385,8 @@ select{appearance:auto}
     <div id="discEnd" hidden>
       <h2 id="discEndTitle"></h2>
       <p id="discEndText"></p>
-      <a class="btn" id="dCall" href="#">Call a mover now</a>
+      <a class="btn" id="dCall" href="#">Connect me with a mover now</a>
+      <p class="meta" id="dClosed" style="text-align:center" hidden></p>
       <button class="btn secondary" id="dSched" type="button">Schedule a call</button>
     </div>
   </section>
@@ -628,6 +630,14 @@ select{appearance:auto}
   const RANGES = [[300, 2000, 4000], [600, 3000, 6000], [900, 4000, 8000], [1200, 5000, 10000], [1800, 8000, 15000]];
   const money = n => '$' + n.toLocaleString('en-US');
   const telHref = () => 'tel:' + CONFIG.callNumber.replace(/[^0-9+]/g, '');
+  // "Connect me with a mover now" only works while the office is open: 7 AM to 9 PM Eastern.
+  function callOpen() { const n = etParts(new Date()); return n.h >= 7 && n.h < 21; }
+  function applyHours(btnId, noteId) {
+    const open = callOpen();
+    $(btnId).hidden = !open;
+    const note = $(noteId);
+    if (note) { note.hidden = open; if (!open) note.textContent = 'Movers are available 7 AM to 9 PM Eastern. Schedule a call and ' + repName + ' will call you.'; }
+  }
   function sendEvent(name, detail) {
     const png = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), c => c.charCodeAt(0));
     const ctx = ['uid=' + answers.uid, 'event=' + name, 'detail=' + clean(detail || ''), 'first=' + clean(answers.first), 'phone=' + clean(answers.phone)].join('|');
@@ -658,6 +668,7 @@ select{appearance:auto}
       $('doneText').textContent = msg || 'We are preparing your estimate.';
       $('qPrice').textContent = ''; $('qToo').hidden = true;
     }
+    applyHours('qCall', 'qClosed');
     showBox('quoteBox'); show('done'); ding();
     sendEvent('quote_shown', cf ? Math.round(cf) + 'cf' : 'none');
   }
@@ -683,13 +694,15 @@ select{appearance:auto}
     if (hit.length) {
       sendEvent('discount_eligible', hit.join('+'));
       $('discEndTitle').textContent = 'You may be eligible for an additional discount';
-      $('discEndText').textContent = 'Call ' + CONFIG.callNumber + ' or schedule a call, and ' + repName + ' will confirm it with you.';
+      $('discEndText').textContent = callOpen() ? 'Call ' + CONFIG.callNumber + ' or schedule a call, and ' + repName + ' will confirm it with you.' : 'Schedule a call and ' + repName + ' will confirm it with you.';
+      applyHours('dCall', 'dClosed');
       showBox('discEnd'); return;
     }
     if (++discStep < DISC.length) { discShow(); return; }
     sendEvent('discount_none', '');
     $('discEndTitle').textContent = 'Checking for specials in your area';
-    $('discEndText').textContent = 'Call ' + CONFIG.callNumber + ' or schedule a call, and ' + repName + ' will go over any specials available for your move.';
+    $('discEndText').textContent = callOpen() ? 'Call ' + CONFIG.callNumber + ' or schedule a call, and ' + repName + ' will go over any specials available for your move.' : 'Schedule a call and ' + repName + ' will go over any specials available for your move.';
+    applyHours('dCall', 'dClosed');
     showBox('discEnd');
   });
   document.querySelectorAll('.repn').forEach(e => { e.textContent = repName; });
