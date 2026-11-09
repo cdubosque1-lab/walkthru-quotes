@@ -131,15 +131,46 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--accent-text)}
 .hint{font-size:13px;color:var(--muted)}
 .savebox{padding:14px;border-radius:14px;border:1px dashed var(--accent);background:var(--accent-soft);display:flex;flex-direction:column;gap:6px;font-size:14px}
 .savebox b{font-size:15px;color:var(--accent-text)}
-.show{margin-top:20px;border-top:1px solid var(--line);padding-top:18px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.showart{width:100%;max-width:280px;height:150px;display:flex;align-items:center;justify-content:center}
-.showart svg{width:100%;height:100%}
-.show h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0}
-.show p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5;max-width:330px}
-.show .kick{font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--accent-text)}
-.showfade{animation:sfade .5s ease}
-@keyframes sfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.showfade{animation:none}}
+.show{margin-top:22px;min-height:430px;justify-content:center;position:relative;overflow:hidden;border-radius:22px;padding:22px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;color:#EAF0FA;background:radial-gradient(120% 90% at 15% 0%,#1C4A82 0%,#12315A 45%,#0A1B33 100%);box-shadow:0 10px 30px rgba(10,27,51,.28)}
+.show::before,.show::after{content:"";position:absolute;border-radius:50%;filter:blur(38px);opacity:.5;pointer-events:none;animation:orb 9s ease-in-out infinite alternate}
+.show::before{width:170px;height:170px;background:#D9480F;top:-60px;right:-50px}
+.show::after{width:150px;height:150px;background:#3C7DD9;bottom:-70px;left:-40px;animation-delay:-4s}
+@keyframes orb{from{transform:translate(0,0) scale(1)}to{transform:translate(-26px,18px) scale(1.25)}}
+.show>*{position:relative;z-index:1}
+.showart{width:100%;max-width:300px;height:160px;display:flex;align-items:center;justify-content:center}
+.showart svg{width:100%;height:100%;overflow:visible}
+.show h3{font-size:21px;font-weight:800;letter-spacing:-.015em;margin:0;color:#fff;line-height:1.2}
+.show p{margin:0;color:#C9D6EA;font-size:15px;line-height:1.55;max-width:340px}
+.show .kick{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#FFB083;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);padding:4px 11px;border-radius:99px}
+.show .dots span{background:rgba(255,255,255,.28)}
+.show .dots span.on{background:#FF8A4C}
+.showbar{width:100%;max-width:340px;height:3px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:2px}
+.showbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#FF8A4C,#FFC48F);transform-origin:left;transform:scaleX(0);animation:sbar 14s linear forwards}
+@keyframes sbar{to{transform:scaleX(1)}}
+.showfade .kick{animation:sin .6s .05s both cubic-bezier(.2,.8,.2,1)}
+.showfade h3{animation:sin .6s .18s both cubic-bezier(.2,.8,.2,1)}
+.showfade p{animation:sin .7s .32s both cubic-bezier(.2,.8,.2,1)}
+.showfade .showart{animation:sart .8s both cubic-bezier(.2,.8,.2,1)}
+@keyframes sin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes sart{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+.sv *{transform-box:fill-box;transform-origin:center}
+.sv .fl{animation:fl 3.2s ease-in-out infinite alternate}
+@keyframes fl{from{transform:translateY(-5px)}to{transform:translateY(5px)}}
+.sv .pu{animation:pu 1.8s ease-in-out infinite}
+@keyframes pu{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+.sv .dr{stroke-dasharray:var(--l,200);stroke-dashoffset:var(--l,200);animation:dr 1.6s .4s forwards ease-out}
+@keyframes dr{to{stroke-dashoffset:0}}
+.sv .pop{opacity:0;animation:pop .5s forwards cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+.sv .scan{animation:scan 2.4s ease-in-out infinite alternate}
+@keyframes scan{from{transform:translateY(-34px)}to{transform:translateY(34px)}}
+.sv .spin{animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sv .drive{animation:drive 3.4s ease-in-out infinite alternate}
+@keyframes drive{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
+.sv .rise{animation:rise 1s .5s both cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{transform:translateY(34px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.show::before,.show::after,.sv *,.showbar i,.showfade *{animation:none!important}.sv .dr{stroke-dashoffset:0}.sv .pop,.sv .rise{opacity:1}.showbar i{transform:scaleX(1)}}
 .stay{background:var(--warn-bg);color:var(--warn-ink);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;font-size:15px}
 .stay b{display:block}
 .pulse{animation:pulse 1.6s ease-in-out infinite}
@@ -299,6 +330,49 @@ select{appearance:auto}
         <li><b>All you need is a general zip code.</b> If you're definitely moving, and you're headed within 200 miles of that zip, you can lock in a floating reservation today.</li>
       </ul>
     </div>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Is your move 100% happening? Are you definitely moving sometime in the next 2 years?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="sure" value="yes"> Yes, I'm definitely moving</label>
+        <label class="choice"><input type="radio" name="sure" value="likely"> Probably, but not 100% yet</label>
+        <label class="choice"><input type="radio" name="sure" value="no"> Just exploring prices</label>
+      </div>
+    </fieldset>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Is this a corporate move, a military move, or a personal move?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="mtype" value="personal"> Personal</label>
+        <label class="choice"><input type="radio" name="mtype" value="corporate"> Corporate</label>
+        <label class="choice"><input type="radio" name="mtype" value="military"> Military</label>
+      </div>
+    </fieldset>
+    <fieldset class="field" id="corpWrap" hidden style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Is the company paying for the move directly, or are they reimbursing you? <span class="hint">(just different paperwork on our end)</span></legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="corppay" value="direct"> The company is paying for it directly</label>
+        <label class="choice"><input type="radio" name="corppay" value="reimburse"> The company is reimbursing me</label>
+        <label class="choice"><input type="radio" name="corppay" value="self"> Neither, I'm paying for it myself</label>
+        <label class="choice"><input type="radio" name="corppay" value="unknown"> I don't know yet</label>
+      </div>
+    </fieldset>
+    <div id="milWrap" hidden style="display:none;flex-direction:column;gap:16px">
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend class="label" style="margin-bottom:6px">Have you received your orders yet?</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="milorders" value="yes"> Yes, I have my orders</label>
+          <label class="choice"><input type="radio" name="milorders" value="no"> Not yet</label>
+        </div>
+      </fieldset>
+      <div class="field"><label for="milRank">What is your rank?</label><input id="milRank" type="text" autocomplete="off" placeholder="For example: E-5, O-3, Sgt, Captain"></div>
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend class="label" style="margin-bottom:6px">Will you need weight tickets?</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="milweight" value="yes"> Yes</label>
+          <label class="choice"><input type="radio" name="milweight" value="no"> No</label>
+          <label class="choice"><input type="radio" name="milweight" value="unsure"> Not sure</label>
+        </div>
+      </fieldset>
+    </div>
     <fieldset class="field reserveq" style="border:0;padding:0;margin:0">
       <legend class="label" style="margin-bottom:6px">Get your move reserved today with full flexibility over your dates and receive an additional $500 off?</legend>
       <div class="choices">
@@ -362,6 +436,7 @@ select{appearance:auto}
       <h3 id="showTitle"></h3>
       <p id="showText"></p>
       <div class="dots" id="showDots" aria-hidden="true"></div>
+      <div class="showbar" aria-hidden="true"><i id="showBar"></i></div>
     </div>
   </section>
 
@@ -467,6 +542,11 @@ select{appearance:auto}
   const clean = v => String(v || '').replace(/[|=\\]/g, ' ').trim().slice(0, 80);
 
   $('wNext').addEventListener('click', () => show('details'));
+  document.querySelectorAll('input[name=mtype]').forEach(r => r.addEventListener('change', () => {
+    const v = (document.querySelector('input[name=mtype]:checked') || {}).value;
+    $('corpWrap').hidden = v !== 'corporate';
+    $('milWrap').hidden = v !== 'military'; $('milWrap').style.display = v === 'military' ? 'flex' : 'none';
+  }));
   $('beds').addEventListener('change', () => { $('bedsOtherWrap').hidden = $('beds').value !== 'Other'; });
   document.querySelectorAll('input[name=storage]').forEach(r => r.addEventListener('change', () => {
     const v = (document.querySelector('input[name=storage]:checked') || {}).value;
@@ -488,6 +568,10 @@ select{appearance:auto}
     const packing = (document.querySelector('input[name=packing]:checked') || {}).value;
     const storage = (document.querySelector('input[name=storage]:checked') || {}).value;
     const reserve = (document.querySelector('input[name=reserve]:checked') || {}).value;
+    const rv = n => (document.querySelector('input[name=' + n + ']:checked') || {}).value;
+    const sure = rv('sure'), mtype = rv('mtype');
+    const corppay = mtype === 'corporate' ? rv('corppay') : '', milorders = mtype === 'military' ? rv('milorders') : '', milweight = mtype === 'military' ? rv('milweight') : '';
+    const milrank = mtype === 'military' ? $('milRank').value.trim() : '';
     const storLen = (storage === 'yes' || storage === 'maybe') ? $('storLen').value : '';
     const problems = [];
     if (!first || !last) problems.push('your first and last name');
@@ -501,12 +585,16 @@ select{appearance:auto}
     if (!moveDate) problems.push('your move date');
     if (!packing) problems.push('your packing choice');
     if (!storage) problems.push('whether you may need storage');
+    if (!sure) problems.push('whether your move is definitely happening');
+    if (!mtype) problems.push('whether this is a personal, corporate or military move');
+    if (mtype === 'corporate' && !corppay) problems.push('who is paying for the corporate move');
+    if (mtype === 'military' && (!milorders || !milrank || !milweight)) problems.push('your orders, rank and weight ticket answers');
     if (!reserve) problems.push('whether you want to reserve today');
     if ((storage === 'yes' || storage === 'maybe') && !storLen) problems.push('about how long you would need storage');
     if (!$('consent').checked) problems.push('the checkbox to agree');
     if (problems.length) { $('detailsErr').textContent = 'Please add ' + problems.join(', ') + '.'; $('detailsErr').hidden = false; return; }
     $('detailsErr').hidden = true;
-    answers = { first, last, phone, email, from_addr: fromAddr, from_city: fromCity, from_state: fromState, from_zip: fromZip, to_addr: toAddr, to_city: toCity, to_state: toState, to_zip: toZip, bedrooms: beds, move_date: moveDate, packing, storage, storage_len: storLen, reserve, rep: repName, src: src };
+    answers = { first, last, phone, email, from_addr: fromAddr, from_city: fromCity, from_state: fromState, from_zip: fromZip, to_addr: toAddr, to_city: toCity, to_state: toState, to_zip: toZip, bedrooms: beds, move_date: moveDate, packing, storage, storage_len: storLen, reserve, sure, move_type: mtype, corp_pay: corppay, mil_orders: milorders, mil_rank: milrank, mil_weight: milweight, rep: repName, src: src };
     if (jobNo) answers.job = jobNo;
     show('capture');
   });
@@ -798,22 +886,22 @@ select{appearance:auto}
   const SHOW = [
     {k:'Why Walkthru',t:'Nobody can price a move they haven\'t seen',
      x:'Movers who guess at your inventory can add "it wasn\'t on the list" charges on move day. Yours is being built from your own video, item by item.',
-     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="20" y="30" width="110" height="90" rx="8" fill="#F4F7FB" stroke="#C5D2E4" stroke-width="2"/><path d="M40 60h70M40 78h55M40 96h40" stroke="#C5D2E4" stroke-width="5" stroke-linecap="round"/><circle cx="196" cy="68" r="34" fill="none" stroke="#D9480F" stroke-width="7"/><path d="M220 92l26 26" stroke="#D9480F" stroke-width="9" stroke-linecap="round"/><path d="M182 68l10 10 18-20" stroke="#D9480F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+     a:'<svg class="sv" viewBox="0 0 300 160" fill="none"><g class="fl"><rect x="40" y="14" width="78" height="132" rx="14" fill="#0A1B33" stroke="#9DB6DA" stroke-width="3"/><rect x="48" y="30" width="62" height="100" rx="6" fill="#16355F"/><rect class="scan" x="48" y="94" width="62" height="3" rx="2" fill="#FF8A4C"/><path d="M60 60h38M60 76h28M60 92h34" stroke="#3E6BA8" stroke-width="5" stroke-linecap="round"/></g><g><rect x="150" y="30" width="120" height="26" rx="8" fill="#fff" opacity=".1"/><rect x="150" y="68" width="120" height="26" rx="8" fill="#fff" opacity=".1"/><rect x="150" y="106" width="120" height="26" rx="8" fill="#fff" opacity=".1"/><path d="M164 43l6 6 11-12" stroke="#6EE7A8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="pop" style="animation-delay:.5s"/><path d="M164 81l6 6 11-12" stroke="#6EE7A8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="pop" style="animation-delay:1.3s"/><path d="M164 119l6 6 11-12" stroke="#6EE7A8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="pop" style="animation-delay:2.1s"/><path d="M196 43h56M196 81h44M196 119h50" stroke="#C9D6EA" stroke-width="5" stroke-linecap="round" opacity=".7"/></g></svg>'},
     {k:'What it saves you',t:'No house call, no 20 to 30% markup',
      x:'Companies that still send someone out to walk your home typically build that cost into your price. Your phone just did the same job.',
-     a:'<svg viewBox="0 0 280 150" fill="none"><path d="M60 78l50-40 50 40v52H60z" fill="#F4F7FB" stroke="#C5D2E4" stroke-width="3" stroke-linejoin="round"/><rect x="95" y="96" width="30" height="34" fill="#C5D2E4"/><circle cx="196" cy="86" r="40" fill="#E3F1EA"/><path d="M196 66v40M186 76h20M186 96h20" stroke="#1D5A3C" stroke-width="6" stroke-linecap="round"/><path d="M172 62l48 48" stroke="#1D5A3C" stroke-width="6" stroke-linecap="round"/></svg>'},
+     a:'<svg class="sv" viewBox="0 0 300 160" fill="none"><path class="dr" style="--l:330" d="M70 84l80-62 80 62v62H70z" stroke="#9DB6DA" stroke-width="4" stroke-linejoin="round"/><rect class="pop" style="animation-delay:1.4s" x="134" y="104" width="32" height="42" rx="3" fill="#16355F"/><g class="fl"><circle cx="230" cy="52" r="30" fill="#FF8A4C"/><text x="230" y="63" text-anchor="middle" font-size="32" font-weight="800" fill="#fff" font-family="system-ui,sans-serif">%</text></g><path class="dr" style="--l:90;animation-delay:1s" d="M208 30l44 44" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>'},
     {k:'Included on every move',t:'Wrapped, carried and rebuilt for you',
      x:'Disassembly, blanket and shrink wrap on every piece of standard furniture, all the loading and driving, then unloading and reassembly. No extra charge.',
-     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="30" y="54" width="92" height="66" rx="6" fill="#C98F55"/><rect x="30" y="80" width="92" height="8" fill="#E4B27A"/><rect x="138" y="40" width="112" height="60" rx="6" fill="#F4F7FB" stroke="#C5D2E4" stroke-width="2"/><rect x="138" y="86" width="112" height="9" fill="#D9480F"/><rect x="138" y="106" width="112" height="12" rx="3" fill="#1B2B44"/><circle cx="166" cy="124" r="12" fill="#101826"/><circle cx="224" cy="124" r="12" fill="#101826"/></svg>'},
+     a:'<svg class="sv" viewBox="0 0 300 160" fill="none"><g class="drive"><rect x="40" y="46" width="130" height="78" rx="8" fill="#F4F7FB"/><rect x="40" y="104" width="130" height="10" fill="#FF8A4C"/><path d="M170 70h42l24 30v24h-66z" fill="#9DB6DA"/><path d="M180 78h26l14 20h-40z" fill="#16355F"/><g class="fl"><rect x="58" y="60" width="30" height="26" rx="3" fill="#C98F55"/><rect x="94" y="68" width="26" height="18" rx="3" fill="#E4B27A"/></g><circle class="spin" cx="76" cy="128" r="13" fill="#0A1B33" stroke="#fff" stroke-width="4" stroke-dasharray="14 6"/><circle class="spin" cx="196" cy="128" r="13" fill="#0A1B33" stroke="#fff" stroke-width="4" stroke-dasharray="14 6"/></g><path d="M20 148h260" stroke="#fff" stroke-width="2" opacity=".25" stroke-dasharray="6 8"/></svg>'},
     {k:'The biggest way to save',t:'Book ahead and save thousands',
      x:'Moves are priced like airline tickets. Reserving early often costs 20 to 50% less, and your date stays a placeholder you can move for free.',
-     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="64" y="34" width="152" height="100" rx="10" fill="#FFF" stroke="#C5D2E4" stroke-width="3"/><rect x="64" y="34" width="152" height="26" rx="10" fill="#12315A"/><path d="M92 24v18M188 24v18" stroke="#12315A" stroke-width="7" stroke-linecap="round"/><circle cx="140" cy="96" r="26" fill="#E3F1EA"/><path d="M128 96l9 9 17-19" stroke="#1D5A3C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+     a:'<svg class="sv" viewBox="0 0 300 160" fill="none"><rect x="40" y="20" width="130" height="120" rx="12" fill="#fff" opacity=".1" stroke="#9DB6DA" stroke-width="2"/><rect x="40" y="20" width="130" height="28" rx="12" fill="#1C4A82"/><g stroke="#C9D6EA" stroke-width="3" opacity=".5" stroke-linecap="round"><path d="M60 70h14M88 70h14M116 70h14M144 70h14M60 92h14M88 92h14M116 92h14M144 92h14M60 114h14M88 114h14"/></g><circle class="pu" cx="123" cy="114" r="11" fill="#FF8A4C"/><path class="dr" style="--l:230;animation-delay:.6s" d="M190 44c20 0 24 14 40 30s28 38 54 44" stroke="#6EE7A8" stroke-width="5" stroke-linecap="round"/><path class="pop" style="animation-delay:2s" d="M270 108l14 12-18 4z" fill="#6EE7A8"/><text x="238" y="40" font-size="15" font-weight="800" fill="#6EE7A8" font-family="system-ui,sans-serif" class="pop" style="animation-delay:1.4s">-50%</text></svg>'},
     {k:'Quality assurance',t:'Your list isn\'t set in stone',
      x:'Three to five days before the move we call to go through the inventory one last time. Anything you take off, you don\'t pay for.',
-     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="86" y="24" width="108" height="112" rx="10" fill="#FFF" stroke="#C5D2E4" stroke-width="3"/><path d="M108 56h64M108 78h64M108 100h40" stroke="#C5D2E4" stroke-width="6" stroke-linecap="round"/><circle cx="196" cy="108" r="30" fill="#FBE7DC"/><path d="M182 108l9 10 20-22" stroke="#D9480F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+     a:'<svg class="sv" viewBox="0 0 300 160" fill="none"><g class="fl"><rect x="86" y="10" width="128" height="140" rx="12" fill="#fff" opacity=".1" stroke="#9DB6DA" stroke-width="2"/><rect x="124" y="4" width="52" height="18" rx="6" fill="#1C4A82"/><path d="M106 48h8M106 80h8M106 112h8" stroke="#C9D6EA" stroke-width="5" stroke-linecap="round"/><path d="M124 48h70M124 80h56M124 112h64" stroke="#C9D6EA" stroke-width="5" stroke-linecap="round" opacity=".5"/><path class="pop" style="animation-delay:.5s" d="M104 44l5 6 10-12" stroke="#6EE7A8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="pop" style="animation-delay:1.3s" d="M104 76l5 6 10-12" stroke="#6EE7A8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="pop" style="animation-delay:2.1s" d="M104 108l5 6 10-12" stroke="#6EE7A8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g></svg>'},
     {k:'Bonus',t:'30 days of free storage',
      x:'Need to hold your things? The first 30 days are free, and so is redelivery to your final address. We can store for up to 2 years.',
-     a:'<svg viewBox="0 0 280 150" fill="none"><path d="M50 62l90-42 90 42v76H50z" fill="#E3F1EA" stroke="#1D5A3C" stroke-width="3" stroke-linejoin="round"/><rect x="112" y="86" width="56" height="52" fill="#1D5A3C"/><path d="M140 86v52" stroke="#E3F1EA" stroke-width="4"/></svg>'}
+     a:'<svg class="sv" viewBox="0 0 300 160" fill="none"><path class="dr" style="--l:420" d="M40 66l110-48 110 48v84H40z" stroke="#9DB6DA" stroke-width="4" stroke-linejoin="round" fill="#fff" fill-opacity=".08"/><rect x="100" y="86" width="100" height="64" fill="#16355F"/><g class="rise"><rect x="108" y="116" width="30" height="30" rx="3" fill="#C98F55"/><rect x="144" y="124" width="22" height="22" rx="3" fill="#E4B27A"/><rect x="170" y="112" width="26" height="34" rx="3" fill="#FF8A4C"/></g><path d="M100 86h100" stroke="#9DB6DA" stroke-width="3" stroke-dasharray="6 5"/></svg>'}
   ];
   let showIx = -1, showTimer = null;
   function showStep() {
@@ -822,9 +910,9 @@ select{appearance:auto}
     $('showArt').innerHTML = d.a; $('showKick').textContent = d.k;
     $('showTitle').textContent = d.t; $('showText').textContent = d.x;
     $('showDots').innerHTML = SHOW.map((_, i) => '<span class="' + (i === showIx ? 'on' : '') + '"></span>').join('');
-    box.classList.remove('showfade'); void box.offsetWidth; box.classList.add('showfade');
+    box.classList.remove('showfade'); const bar = $('showBar'); bar.style.animation = 'none'; void box.offsetWidth; bar.style.animation = ''; box.classList.add('showfade');
   }
-  function showStart() { if (showTimer) return; showStep(); showTimer = setInterval(showStep, 7000); }
+  function showStart() { if (showTimer) return; showStep(); showTimer = setInterval(showStep, 14000); }
   function showStop() { clearInterval(showTimer); showTimer = null; }
   function startAnalyzing(uid) {
     show('analyzing'); showStart();
