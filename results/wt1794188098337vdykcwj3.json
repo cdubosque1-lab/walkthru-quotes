@@ -1,0 +1,37 @@
+{
+ "intro": "We always take care of disassembly and reassembly of standard furniture, full blanket, pad and shrink wrapping of all furniture, and all the loading and unloading, at no extra charge. Just a few quick questions about packing:",
+ "questions": [
+  {
+   "id": "bed",
+   "text": "Is the bed with the wood headboard a full, a queen or a king?",
+   "options": [
+    {
+     "key": "full",
+     "label": "Full"
+    },
+    {
+     "key": "queen",
+     "label": "Queen"
+    },
+    {
+     "key": "king",
+     "label": "King"
+    }
+   ]
+  },
+  {
+   "id": "tvbox",
+   "text": "We require TVs to be in TV boxes. Would you like us to supply them for you (a little extra cost), or will you supply your own TV boxes?",
+   "options": [
+    {
+     "key": "we",
+     "label": "Please supply TV boxes for me"
+    },
+    {
+     "key": "self",
+     "label": "I'll supply my own TV boxes"
+    }
+   ]
+  }
+ ]
+}
