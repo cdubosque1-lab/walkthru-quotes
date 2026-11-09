@@ -131,6 +131,15 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--accent-text)}
 .hint{font-size:13px;color:var(--muted)}
 .savebox{padding:14px;border-radius:14px;border:1px dashed var(--accent);background:var(--accent-soft);display:flex;flex-direction:column;gap:6px;font-size:14px}
 .savebox b{font-size:15px;color:var(--accent-text)}
+.show{margin-top:20px;border-top:1px solid var(--line);padding-top:18px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.showart{width:100%;max-width:280px;height:150px;display:flex;align-items:center;justify-content:center}
+.showart svg{width:100%;height:100%}
+.show h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0}
+.show p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5;max-width:330px}
+.show .kick{font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--accent-text)}
+.showfade{animation:sfade .5s ease}
+@keyframes sfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.showfade{animation:none}}
 .stay{background:var(--warn-bg);color:var(--warn-ink);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;font-size:15px}
 .stay b{display:block}
 .pulse{animation:pulse 1.6s ease-in-out infinite}
@@ -290,6 +299,13 @@ select{appearance:auto}
         <li><b>All you need is a general zip code.</b> If you're definitely moving, and you're headed within 200 miles of that zip, you can lock in a floating reservation today.</li>
       </ul>
     </div>
+    <fieldset class="field reserveq" style="border:0;padding:0;margin:0">
+      <legend class="label" style="margin-bottom:6px">Get your move reserved today with full flexibility over your dates and receive an additional $500 off?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="reserve" value="yes"> Yes, I'd like to reserve today and take the $500 off</label>
+        <label class="choice"><input type="radio" name="reserve" value="no"> No, not today</label>
+      </div>
+    </fieldset>
     <label class="consent"><input id="consent" type="checkbox"> I agree that my video and answers can be used to prepare my moving estimate.</label>
     <p class="err" id="detailsErr" role="alert" hidden></p>
     <button class="btn" type="submit">Continue</button>
@@ -340,6 +356,13 @@ select{appearance:auto}
     <p class="pct" id="pct">0%</p>
     <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="abar"><i id="abarFill"></i></div>
     <div class="stay"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l10 18H2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><div><b>Please don't close this page</b>We're analyzing your video right now. This can take several minutes, and your questions will appear here. Leaving this page will lose your place.</div></div>
+    <div class="show" id="show">
+      <div class="showart" id="showArt"></div>
+      <span class="kick" id="showKick"></span>
+      <h3 id="showTitle"></h3>
+      <p id="showText"></p>
+      <div class="dots" id="showDots" aria-hidden="true"></div>
+    </div>
   </section>
 
   <!-- Questions -->
@@ -464,6 +487,7 @@ select{appearance:auto}
     const email = $('email').value.trim();
     const packing = (document.querySelector('input[name=packing]:checked') || {}).value;
     const storage = (document.querySelector('input[name=storage]:checked') || {}).value;
+    const reserve = (document.querySelector('input[name=reserve]:checked') || {}).value;
     const storLen = (storage === 'yes' || storage === 'maybe') ? $('storLen').value : '';
     const problems = [];
     if (!first || !last) problems.push('your first and last name');
@@ -477,11 +501,12 @@ select{appearance:auto}
     if (!moveDate) problems.push('your move date');
     if (!packing) problems.push('your packing choice');
     if (!storage) problems.push('whether you may need storage');
+    if (!reserve) problems.push('whether you want to reserve today');
     if ((storage === 'yes' || storage === 'maybe') && !storLen) problems.push('about how long you would need storage');
     if (!$('consent').checked) problems.push('the checkbox to agree');
     if (problems.length) { $('detailsErr').textContent = 'Please add ' + problems.join(', ') + '.'; $('detailsErr').hidden = false; return; }
     $('detailsErr').hidden = true;
-    answers = { first, last, phone, email, from_addr: fromAddr, from_city: fromCity, from_state: fromState, from_zip: fromZip, to_addr: toAddr, to_city: toCity, to_state: toState, to_zip: toZip, bedrooms: beds, move_date: moveDate, packing, storage, storage_len: storLen, rep: repName, src: src };
+    answers = { first, last, phone, email, from_addr: fromAddr, from_city: fromCity, from_state: fromState, from_zip: fromZip, to_addr: toAddr, to_city: toCity, to_state: toState, to_zip: toZip, bedrooms: beds, move_date: moveDate, packing, storage, storage_len: storLen, reserve, rep: repName, src: src };
     if (jobNo) answers.job = jobNo;
     show('capture');
   });
@@ -684,7 +709,7 @@ select{appearance:auto}
     showBox('discEnd');
   });
   document.querySelectorAll('.repn').forEach(e => { e.textContent = repName; });
-  window.__wt = { finish: finish, demo: (a, q) => { answers = a; quote = q; finish(); } };
+  window.__wt = { finish: finish, demo: (a, q) => { answers = a; quote = q; finish(); }, slides: () => { show('analyzing'); showStart(); }, nextSlide: showStep };
   // Sounds: unlocked by the customer's first tap (browsers block audio before that)
   let actx = null;
   const unlock = () => { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {} };
@@ -768,8 +793,41 @@ select{appearance:auto}
       try { navigator.clipboard.writeText(CONFIG.callNumber); } catch (x) {}
     }
   });
+
+  // Slideshow that plays while the video is being analyzed
+  const SHOW = [
+    {k:'Why Walkthru',t:'Nobody can price a move they haven\'t seen',
+     x:'Movers who guess at your inventory can add "it wasn\'t on the list" charges on move day. Yours is being built from your own video, item by item.',
+     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="20" y="30" width="110" height="90" rx="8" fill="#F4F7FB" stroke="#C5D2E4" stroke-width="2"/><path d="M40 60h70M40 78h55M40 96h40" stroke="#C5D2E4" stroke-width="5" stroke-linecap="round"/><circle cx="196" cy="68" r="34" fill="none" stroke="#D9480F" stroke-width="7"/><path d="M220 92l26 26" stroke="#D9480F" stroke-width="9" stroke-linecap="round"/><path d="M182 68l10 10 18-20" stroke="#D9480F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+    {k:'What it saves you',t:'No house call, no 20 to 30% markup',
+     x:'Companies that still send someone out to walk your home typically build that cost into your price. Your phone just did the same job.',
+     a:'<svg viewBox="0 0 280 150" fill="none"><path d="M60 78l50-40 50 40v52H60z" fill="#F4F7FB" stroke="#C5D2E4" stroke-width="3" stroke-linejoin="round"/><rect x="95" y="96" width="30" height="34" fill="#C5D2E4"/><circle cx="196" cy="86" r="40" fill="#E3F1EA"/><path d="M196 66v40M186 76h20M186 96h20" stroke="#1D5A3C" stroke-width="6" stroke-linecap="round"/><path d="M172 62l48 48" stroke="#1D5A3C" stroke-width="6" stroke-linecap="round"/></svg>'},
+    {k:'Included on every move',t:'Wrapped, carried and rebuilt for you',
+     x:'Disassembly, blanket and shrink wrap on every piece of standard furniture, all the loading and driving, then unloading and reassembly. No extra charge.',
+     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="30" y="54" width="92" height="66" rx="6" fill="#C98F55"/><rect x="30" y="80" width="92" height="8" fill="#E4B27A"/><rect x="138" y="40" width="112" height="60" rx="6" fill="#F4F7FB" stroke="#C5D2E4" stroke-width="2"/><rect x="138" y="86" width="112" height="9" fill="#D9480F"/><rect x="138" y="106" width="112" height="12" rx="3" fill="#1B2B44"/><circle cx="166" cy="124" r="12" fill="#101826"/><circle cx="224" cy="124" r="12" fill="#101826"/></svg>'},
+    {k:'The biggest way to save',t:'Book ahead and save thousands',
+     x:'Moves are priced like airline tickets. Reserving early often costs 20 to 50% less, and your date stays a placeholder you can move for free.',
+     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="64" y="34" width="152" height="100" rx="10" fill="#FFF" stroke="#C5D2E4" stroke-width="3"/><rect x="64" y="34" width="152" height="26" rx="10" fill="#12315A"/><path d="M92 24v18M188 24v18" stroke="#12315A" stroke-width="7" stroke-linecap="round"/><circle cx="140" cy="96" r="26" fill="#E3F1EA"/><path d="M128 96l9 9 17-19" stroke="#1D5A3C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+    {k:'Quality assurance',t:'Your list isn\'t set in stone',
+     x:'Three to five days before the move we call to go through the inventory one last time. Anything you take off, you don\'t pay for.',
+     a:'<svg viewBox="0 0 280 150" fill="none"><rect x="86" y="24" width="108" height="112" rx="10" fill="#FFF" stroke="#C5D2E4" stroke-width="3"/><path d="M108 56h64M108 78h64M108 100h40" stroke="#C5D2E4" stroke-width="6" stroke-linecap="round"/><circle cx="196" cy="108" r="30" fill="#FBE7DC"/><path d="M182 108l9 10 20-22" stroke="#D9480F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+    {k:'Bonus',t:'30 days of free storage',
+     x:'Need to hold your things? The first 30 days are free, and so is redelivery to your final address. We can store for up to 2 years.',
+     a:'<svg viewBox="0 0 280 150" fill="none"><path d="M50 62l90-42 90 42v76H50z" fill="#E3F1EA" stroke="#1D5A3C" stroke-width="3" stroke-linejoin="round"/><rect x="112" y="86" width="56" height="52" fill="#1D5A3C"/><path d="M140 86v52" stroke="#E3F1EA" stroke-width="4"/></svg>'}
+  ];
+  let showIx = -1, showTimer = null;
+  function showStep() {
+    showIx = (showIx + 1) % SHOW.length;
+    const d = SHOW[showIx], box = $('show');
+    $('showArt').innerHTML = d.a; $('showKick').textContent = d.k;
+    $('showTitle').textContent = d.t; $('showText').textContent = d.x;
+    $('showDots').innerHTML = SHOW.map((_, i) => '<span class="' + (i === showIx ? 'on' : '') + '"></span>').join('');
+    box.classList.remove('showfade'); void box.offsetWidth; box.classList.add('showfade');
+  }
+  function showStart() { if (showTimer) return; showStep(); showTimer = setInterval(showStep, 7000); }
+  function showStop() { clearInterval(showTimer); showTimer = null; }
   function startAnalyzing(uid) {
-    show('analyzing');
+    show('analyzing'); showStart();
     const t0 = Date.now();
     let pct = 0, stopped = false, asked = false, paused = false, answeredAt = 0;
     const setPct = p => { pct = p; $('pct').textContent = Math.floor(p) + '%'; $('abarFill').style.width = p + '%'; $('abar').setAttribute('aria-valuenow', Math.floor(p)); };
@@ -789,7 +847,7 @@ select{appearance:auto}
             const res = await r.json();
             if (res.questions && res.questions.length && !asked) {
               asked = true; paused = true; setPct(80);
-              showQuestions(uid, res.questions, res.intro || '', () => { paused = false; answeredAt = Date.now(); show('analyzing'); });
+              showStop(); showQuestions(uid, res.questions, res.intro || '', () => { paused = false; answeredAt = Date.now(); show('analyzing'); showStart(); });
             } else if (res.done && !(res.questions && res.questions.length && !asked)) {
               quote = res; stopped = true; clearInterval(tick);
               for (let p = Math.floor(pct); p <= 100; p += 2) { setPct(Math.min(100, p)); await new Promise(z => setTimeout(z, 40)); }
@@ -800,7 +858,7 @@ select{appearance:auto}
             }
           }
         } catch (e) {}
-        if ((Date.now() - t0) > 90 * 60 * 1000) { stopped = true; clearInterval(tick); finish(repName + ' will follow up with your estimate.'); return; }
+        if ((Date.now() - t0) > 90 * 60 * 1000) { stopped = true; clearInterval(tick); showStop(); finish(repName + ' will follow up with your estimate.'); return; }
       }
       setTimeout(poll, 10000);
     };
